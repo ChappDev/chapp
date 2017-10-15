@@ -1,2 +1,2 @@
 # chapp
-Crossplatform anonymous group chats.
+Crossplatform anonymous group chats based on blockchain.
