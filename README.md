@@ -1,2 +1,2 @@
 # Chapp
-Crossplatform anonymous group chats based on blockchain (maybe).
+Crossplatform anonymous group chats.
