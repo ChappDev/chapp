@@ -1,0 +1,34 @@
+{
+  "name": "Raggamote",
+  "project": {
+    "name": "Chapp",
+    "description": "Cross-platform anonymous group chats"
+  },
+  "size": 4,
+  "members": [
+    {
+      "name": "Георгий",
+      "surname": "Габолаев",
+      "group": "АПО-12",
+      "link_to_git_profile": "github.com/gabolaev"
+    },
+    {
+      "name": "Солтан",
+      "surname": "Текеев",
+      "group": "АПО-12",
+      "link_to_git_profile": "github.com/stek29"
+    },
+    {
+      "name": "Виталий",
+      "surname": "Рамазанов",
+      "group": "АПО-13",
+      "link_to_git_profile": "github.com/vetas-R"
+    },
+    {
+      "name": "Александр",
+      "surname": "Мовсесов",
+      "group": "АПО-12",
+      "link_to_git_profile": "github.com/alexmovsesov"
+    }
+  ]
+}
