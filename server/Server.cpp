@@ -39,6 +39,7 @@ void Server::slotNewConnection()
 
 void Server::slotServerRead()
 {
+    //TODO: Реализовать сериализацию в базу (где база?)
     //Возникли проблемы с определением отправителя сообщения.
     //QTcpSocket *sender = qobject_cast<QTcpSocket*>(sender());
     /*
