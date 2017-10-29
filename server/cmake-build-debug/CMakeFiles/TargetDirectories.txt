@@ -1,0 +1,4 @@
+/Users/vetas/Dev/Chapp/chapp/server/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/vetas/Dev/Chapp/chapp/server/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/vetas/Dev/Chapp/chapp/server/cmake-build-debug/CMakeFiles/server.dir
+/Users/vetas/Dev/Chapp/chapp/server/cmake-build-debug/CMakeFiles/server_autogen.dir
