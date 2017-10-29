@@ -3,13 +3,35 @@
 
 CMakeFiles/server.dir/Server.cpp.o: ../Server.cpp
 CMakeFiles/server.dir/Server.cpp.o: ../Server.hpp
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QDebug
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QObject
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qdebug.h
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qobject.h
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpServer
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpSocket
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpserver.h
+CMakeFiles/server.dir/Server.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpsocket.h
 
 CMakeFiles/server.dir/main.cpp.o: ../Server.hpp
 CMakeFiles/server.dir/main.cpp.o: ../main.cpp
 CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QCoreApplication
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QObject
 CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QtDebug
 CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qcoreapplication.h
 CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qdebug.h
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qobject.h
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpServer
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpSocket
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpserver.h
+CMakeFiles/server.dir/main.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpsocket.h
 
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: ../Server.hpp
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: server_autogen/EWIEGA46WW/moc_Server.cpp
 CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: server_autogen/moc_compilation.cpp
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/QObject
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtCore.framework/Headers/qobject.h
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpServer
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/QTcpSocket
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpserver.h
+CMakeFiles/server.dir/server_autogen/moc_compilation.cpp.o: /Users/vetas/Qt/5.9.2/clang_64/lib/QtNetwork.framework/Headers/qtcpsocket.h
 
