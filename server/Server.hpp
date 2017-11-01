@@ -8,7 +8,9 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <iostream>
-
+class AbstractGroup;
+class User;
+class Message;
 
 //TODO: немного изменить логику
 class Server : public QTcpServer
@@ -18,12 +20,13 @@ public:
 
     explicit Server(QObject *parent = 0);
 
+    void stop();
+
     void incomingConnection(qintptr socketDescriptor) override; //Необходимо перехватить входящее подключение для реализации авторизации
 
     void start(const QHostAddress &address, quint16 port);
 
     void sendMessageToGroup(); //TODO: Реализовать, учитывая БД и логику
-
 
 public slots:
 
