@@ -12,21 +12,22 @@ class AbstractGroup;
 class User;
 class Message;
 
-//TODO: немного изменить логику
 class Server : public QTcpServer
 {
     Q_OBJECT
 public:
 
-    explicit Server(QObject *parent = 0);
+    explicit Server(QObject *parent = nullptr);
+
+    ~Server() override;
 
     void stop();
 
-    void incomingConnection(qintptr socketDescriptor) override; //Необходимо перехватить входящее подключение для реализации авторизации
+    void incomingConnection(qintptr socketDescriptor) override;
 
     void start(const QHostAddress &address, quint16 port);
 
-    void sendMessageToGroup(); //TODO: Реализовать, учитывая БД и логику
+    void sendMessageToGroup();
 
 public slots:
 

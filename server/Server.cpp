@@ -92,4 +92,12 @@ void Server::stop()
             val->close();
         }
     close();
+    QTcpServer::~QTcpServer();
+
+}
+
+Server::~Server()
+{
+    clients.clear();
+    QTcpServer::~QTcpServer();
 }
