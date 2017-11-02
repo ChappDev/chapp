@@ -65,7 +65,7 @@ void Server::slotServerRead() //Читаем информацию из соке�
         QString readString = client->readAll();
         QByteArray array;
         array.append(readString);
-        std::cout << array.toStdString(); //Выводим в лог
+        std::cout << "Client says : " << array.toStdString(); //Выводим в лог
         std::string str = array.toStdString();
         if (str == "end\r\n")
             client->close();

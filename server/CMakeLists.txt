@@ -3,7 +3,7 @@ project(server)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_PREFIX_PATH /Users/vetas/Qt/5.9.2/clang_64/) #Находим все либы Qt
+#set(CMAKE_PREFIX_PATH /Users/vetas/Qt/5.9.2/clang_64/) #Находим все либы Qt
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON) #Включаем поиск в текущей директории
 set(CMAKE_AUTOMOC ON) #Включаем автосоздание моков, когда они нужны
