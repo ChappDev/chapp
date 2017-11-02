@@ -19,8 +19,6 @@ public:
 
     explicit Server(QObject *parent = nullptr);
 
-    ~Server() override;
-
     void stop();
 
     void incomingConnection(qintptr socketDescriptor) override;

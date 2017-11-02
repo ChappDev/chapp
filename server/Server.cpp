@@ -12,6 +12,10 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     start(QHostAddress::Any, quint16(port));
 }
 
+/// start -- starting the server
+///
+/// @param address -- an IP-address that server should listen
+/// @param port -- a port that server should listen
 void Server::start(const QHostAddress &address, quint16 port)
 {
     connect(this, &Server::newConnection, this, &Server::slotNewConnection);
@@ -28,11 +32,18 @@ void Server::start(const QHostAddress &address, quint16 port)
     }
 }
 
+/// incomingConnection -- handles incomming connections (before slotNewConnection)
+///
+/// @param socketDescriptor -- the socket's descriptor that should be used
 void Server::incomingConnection(qintptr socketDescriptor) //Можно модифицировать сокет (дескрипторы, IOMode, вот это все)
 {
     emit QTcpServer::incomingConnection(socketDescriptor);
 }
 
+/// sendMessageToGroup -- sending messages to groups
+///
+/// @param message -- message, obviously
+/// @param address -- a group that should receive message
 void Server::sendMessageToGroup() //Пока ничего не делает, т.к. нет сериализации групп и вообще всего этого
 {
     //QSet<User> users;
@@ -40,6 +51,7 @@ void Server::sendMessageToGroup() //Пока ничего не делает, т.
     //Отсылаем им сообщение
 }
 
+/// slotNewConnection -- handles new connections
 void Server::slotNewConnection()
 {
     QTcpSocket *client = nextPendingConnection();
@@ -52,7 +64,7 @@ void Server::slotNewConnection()
     connect(client, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
     sendMessageToGroup();
 }
-
+/// slotServerRead -- reading data from the socket
 void Server::slotServerRead() //Читаем информацию из сокета
 {
     auto *client = (QTcpSocket*)sender();
@@ -67,6 +79,7 @@ void Server::slotServerRead() //Читаем информацию из соке�
         array.append(readString);
         std::cout << "Client says : " << array.toStdString(); //Выводим в лог
         std::string str = array.toStdString();
+
         if (str == "end\r\n")
             client->close();
 
@@ -74,6 +87,9 @@ void Server::slotServerRead() //Читаем информацию из соке�
     }
 }
 
+/// slotClientDisconnected
+///
+/// handles disconnections
 void Server::slotClientDisconnected()
 {
     auto *client = (QTcpSocket*)sender();
@@ -85,6 +101,7 @@ void Server::slotClientDisconnected()
     }
 }
 
+/// stop -- stops and destroy the server
 void Server::stop()
 {
     foreach(QTcpSocket* val, clients)
@@ -92,12 +109,4 @@ void Server::stop()
             val->close();
         }
     close();
-    QTcpServer::~QTcpServer();
-
-}
-
-Server::~Server()
-{
-    clients.clear();
-    QTcpServer::~QTcpServer();
 }
