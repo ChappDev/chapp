@@ -7,7 +7,7 @@
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
     qsrand(static_cast<uint>(time(nullptr)));
-    int port = qrand() % (65536 - 6000) + 1000; //Магия с портом, на котором сервер будет слушать
+    int port = qrand() % (65536 - 6000) + 1024; //Магия с портом, на котором сервер будет слушать
 
     start(QHostAddress::Any, quint16(port));
 }
