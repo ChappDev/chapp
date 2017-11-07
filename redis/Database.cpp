@@ -38,9 +38,9 @@ int Database::addGroup(groupType type, std::string name) {
     return stoi(newGroupId);
 }
 
-std::map<int, std::string> Database::getListOfGroups(bool showPrivateGroups) {
+std::map<int, std::string> Database::getListOfGroups(groupType type) {
 
-    std::future<cpp_redis::reply> queryRes = client.hgetall(std::to_string(showPrivateGroups));
+    std::future<cpp_redis::reply> queryRes = client.hgetall(std::to_string(type));
     client.sync_commit();
 
     auto parsedResponse = queryRes.get().as_array();

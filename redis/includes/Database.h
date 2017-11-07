@@ -22,12 +22,14 @@ class Database {
 
 public:
 
+    //TODO: 1) add auth by password; 2) protected groups passwords; 3) protected groups invite-lists;
+
     Database(std::string ipAddr, int port);
 
     std::string incrementNowId(typeOfId type);
 
     int addGroup(groupType type, std::string name);
-    std::map<int, std::string> getListOfGroups(bool showPrivateGroups = 0);
+    std::map<int, std::string> getListOfGroups(groupType type);
     void deleteGroup(groupType type, int gid);
 
     int addUser(std::string username);
