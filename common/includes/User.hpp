@@ -53,8 +53,8 @@ namespace Chapp {
     private:
         friend class UserFactory; // only allow construct users via UserFactory
 
-        User(int32_t uid, const string& username);
-        User(int32_t uid, string username, Phash hash);
+        User(chapp_id_t uid, const string& username);
+        User(chapp_id_t uid, string username, Phash hash);
 
     public:
         /*!
@@ -70,7 +70,7 @@ namespace Chapp {
          * @param invite GroupInvite for group user is being invited to
          * @return Ok on success
          */
-        Error invite(int32_t inviter_id, const GroupInvite& invite);
+        Error invite(chapp_id_t inviter_id, const GroupInvite& invite);
 
         /*!
          * Add user to group
@@ -100,13 +100,13 @@ namespace Chapp {
         };
 
     public:
-        int32_t id;
+        chapp_id_t id;
         string username;
 
     private:
         Phash pass_hash;
-        map<int32_t, GroupInvite> invites_by_gid;
-        set<int32_t> joined_groups;
+        map<chapp_id_t, GroupInvite> invites_by_gid;
+        set<chapp_id_t> joined_groups;
         time_t last_activity;
 
     };

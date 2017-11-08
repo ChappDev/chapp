@@ -37,7 +37,7 @@
  * class GroupFactory {
  * public:
  *   GroupFactory& Instance();
- *   Group* get(GroupType type, int32_t gid);
+ *   Group* get(GroupType type, chapp_id_t gid);
  *   void remove(Group *);
  *
  *   template<class... Args>
@@ -66,7 +66,7 @@ namespace Chapp {
         GroupFactory() = default;
 
     public:
-        Group* get(GroupType type, int32_t gid) const {
+        Group* get(GroupType type, chapp_id_t gid) const {
             auto it = groups_by_id.find(gid);
 
             if (it == groups_by_id.end()) {
@@ -114,7 +114,7 @@ namespace Chapp {
         }
 
     private:
-        map<int32_t, Group*> groups_by_id;
+        map<chapp_id_t, Group*> groups_by_id;
 
     };
 

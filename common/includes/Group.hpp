@@ -54,7 +54,7 @@ namespace Chapp {
          * @param gname group name
          * @param users map of users in group by their ids
          */
-        Group(int32_t gid, GroupType gtype, string gname, map<int32_t, User*> users);
+        Group(chapp_id_t gid, GroupType gtype, string gname, map<chapp_id_t, User*> users);
 
     public:
         /*!
@@ -63,7 +63,7 @@ namespace Chapp {
          * @param msg message to send
          * @return Ok on success
          */
-        Error broadcast(int32_t uid, Message msg);
+        Error broadcast(chapp_id_t uid, Message msg);
 
         /*!
          * Invite user to group
@@ -71,7 +71,7 @@ namespace Chapp {
          * @param new_uid user id being invited
          * @return Ok on success
          */
-        Error invite(int32_t curr_uid, int32_t new_uid);
+        Error invite(chapp_id_t curr_uid, chapp_id_t new_uid);
 
         /*!
          * Join group with hash
@@ -79,14 +79,14 @@ namespace Chapp {
          * @param hash hash, which has to be valid for uid
          * @return Ok on success
          */
-        Error join(int32_t uid, const Phash& hash);
+        Error join(chapp_id_t uid, const Phash& hash);
 
         /*!
          * Leave group
          * @param uid id of user leaving
          * @return Ok on success
          */
-        Error leave(int32_t uid);
+        Error leave(chapp_id_t uid);
 
         /*!
          * List users in group
@@ -114,14 +114,14 @@ namespace Chapp {
          * @param uid user id being checked
          * @return true if user is in group already
          */
-        inline bool has_user(int32_t uid);
+        inline bool has_user(chapp_id_t uid);
 
         /*!
          * Generate hash for this uid, checked later via check_hash
          * @param uid user id
          * @return hash guaranteed to be valid for this uid
          */
-        virtual Phash gen_hash(int32_t uid) const = 0;
+        virtual Phash gen_hash(chapp_id_t uid) const = 0;
 
         /*!
          * Check hash for this uid, probably generated via gen_hash
@@ -129,14 +129,14 @@ namespace Chapp {
          * @param hash hash recieved from user
          * @return true if hash is valid and user can join, false if not
          */
-        virtual bool check_hash(int32_t uid, const Phash& hash) const = 0;
+        virtual bool check_hash(chapp_id_t uid, const Phash& hash) const = 0;
 
         /*!
          * Create GroupInvite for user
          * @param uid id of user
          * @return Invite valid for user
          */
-        GroupInvite make_invite(int32_t uid) const {
+        GroupInvite make_invite(chapp_id_t uid) const {
             return {
                     .hash = gen_hash(uid),
                     .for_uid = uid,
@@ -145,13 +145,13 @@ namespace Chapp {
         };
 
     public:
-        int32_t id;
+        chapp_id_t id;
         GroupType type;
         string name;
 
 
     protected:
-        map<int32_t, User*> users_by_id;
+        map<chapp_id_t, User*> users_by_id;
 
     };
 
@@ -165,7 +165,7 @@ namespace Chapp {
          * @param gname group name
          * @param creator user creating the group
          */
-        PublicGroup(int32_t gid, const string& gname, User* creator);
+        PublicGroup(chapp_id_t gid, const string& gname, User* creator);
 
         /*!
          * Construct group from DB
@@ -173,20 +173,20 @@ namespace Chapp {
          * @param gname group name
          * @param users ids:users in the group
          */
-        PublicGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users);
+        PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users);
 
     private:
         /*!
          * Generate hash for uid
          * @return 0-filled hash
          */
-        Phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(chapp_id_t uid) const override;
 
         /*!
          * Check hash for uid
          * @return always true
          */
-        bool check_hash(int32_t uid, const Phash& hash) const override;
+        bool check_hash(chapp_id_t uid, const Phash& hash) const override;
 
     };
 
@@ -201,7 +201,7 @@ namespace Chapp {
          * @param creator user creating group
          * @param hash group password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, User* creator, Phash ghash);
+        ProtectedGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash);
 
         /*!
          * Construct group
@@ -210,20 +210,20 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash);
+        ProtectedGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash);
 
     private:
         /*!
          * Generate hash
          * @return groups password hash, common for all users
          */
-        Phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(chapp_id_t uid) const override;
 
         /*!
          * Check hash
          * @return true if hash matches group's hash
          */
-        bool check_hash(int32_t uid, const Phash& hash) const override;
+        bool check_hash(chapp_id_t uid, const Phash& hash) const override;
 
         Phash hash;
 
@@ -239,7 +239,7 @@ namespace Chapp {
          * @param gname group name
          * @param creator user creating group
          */
-        PrivateGroup(int32_t gid, const string& gname, User* creator);
+        PrivateGroup(chapp_id_t gid, const string& gname, User* creator);
 
         /*!
          * Construct group
@@ -248,20 +248,20 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash group's hash
          */
-        PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash);
+        PrivateGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash);
 
     private:
         /*!
          * Generate hash
          * @return hash valid for uid
          */
-        Phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(chapp_id_t uid) const override;
 
         /*!
          * Check hash
          * @return true if hash is valid for this uid
          */
-        bool check_hash(int32_t uid, const Phash& hash) const override;
+        bool check_hash(chapp_id_t uid, const Phash& hash) const override;
 
         Phash hash;
 
