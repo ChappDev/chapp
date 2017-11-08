@@ -155,7 +155,7 @@ namespace Chapp {
             , hash(ghash)
     {}
 
-    // TODO(stek29): Properly gen/check hashes for uid
+    // TODO(stek): Properly gen/check hashes for uid
     phash PrivateGroup::gen_hash(int32_t uid) const {
         (void) uid;
         return hash;

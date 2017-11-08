@@ -40,13 +40,13 @@ namespace Chapp {
 
     User::~User() {
         for (auto &group_id : joined_groups) {
-            // TODO(stek29): Avoid constructing groups just to delete user?
+            // TODO(stek): Avoid constructing groups just to delete user?
             auto group = GroupFactory::getInstance().by_id(group_id);
             if (group == nullptr) {
                 continue; // WTF?!
             }
 
-            // TODO(stek29): When socket is added, avoid notifying it here
+            // TODO(stek): When socket is added, avoid notifying it here
             group->leave(id);
         }
     }
@@ -67,7 +67,7 @@ namespace Chapp {
 
         invites_by_gid.insert(std::make_pair(gid, invite));
 
-        // TODO(stek29): notify socket
+        // TODO(stek): notify socket
         (void) inviter_id;
 
         return Error::Ok;
@@ -80,7 +80,7 @@ namespace Chapp {
         }
 
         // Database.addUserToGroup(id, group.id);
-        // TODO(stek29): notify socket
+        // TODO(stek): notify socket
         (void)0; // To disable CLion simplify
         return Error::Ok;
     }
