@@ -99,6 +99,14 @@ namespace Chapp {
             };
         };
 
+    private:
+        /*!
+         * Set last_activity to current timestamp
+         */
+        void mark_active() {
+            last_activity = Util::get_current_ts();
+        };
+
     public:
         chapp_id_t id;
         string username;

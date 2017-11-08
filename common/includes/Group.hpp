@@ -144,6 +144,14 @@ namespace Chapp {
             };
         };
 
+    protected:
+        /*!
+         * Set last_activity to current timestamp
+         */
+        void mark_active() {
+            last_activity = Util::get_current_ts();
+        };
+
     public:
         chapp_id_t id;
         GroupType type;
@@ -152,6 +160,7 @@ namespace Chapp {
 
     protected:
         map<chapp_id_t, User*> users_by_id;
+        timestamp_t last_activity;
 
     };
 

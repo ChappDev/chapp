@@ -34,9 +34,12 @@ namespace Chapp {
             , type(gtype)
             , name(std::move(gname))
             , users_by_id(std::move(users))
+            , last_activity(Util::get_current_ts())
     {};
 
     Error Group::broadcast(chapp_id_t  /*uid*/, Message msg) {
+        mark_active();
+
         for (const auto &pair : users_by_id) {
             pair.second->deliver_message(msg);
         }
@@ -45,6 +48,8 @@ namespace Chapp {
     }
 
     Error Group::invite(chapp_id_t curr_uid, chapp_id_t new_uid) {
+        mark_active();
+        
         if (!has_user(curr_uid)) {
             return Error::NotInGroup; // curr_uid should be in group
         }
@@ -63,6 +68,8 @@ namespace Chapp {
     }
 
     Error Group::join(chapp_id_t uid, const Phash& hash) {
+        mark_active();
+
         if (!check_hash(uid, hash)) {
             return Error::IncorrectHash; // Wrong hash
         }
@@ -83,6 +90,8 @@ namespace Chapp {
     }
 
     Error Group::leave(chapp_id_t uid) {
+        mark_active();
+        
         auto it = users_by_id.find(uid);
         if (it == users_by_id.end()) {
             return Error::NotInGroup; // no such user in group
