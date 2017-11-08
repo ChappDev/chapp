@@ -38,8 +38,7 @@ if(${NO_DATABASE})
     NO_DATABASE
   )
 else()
-  find_path(DATABASE_INCLUDES
-    names Database.h GroupFactory.hpp
+  find_path(DATABASE_INCLUDES Database.hpp
     paths ${CMAKE_SOURCE_DIR}/redis/includes)
 
   target_include_directories(chapp_common PUBLIC
