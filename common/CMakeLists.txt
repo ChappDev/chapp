@@ -19,6 +19,7 @@ set(SOURCE_FILES
   includes/Common.hpp
   includes/UserFactory.hpp
   includes/Errors.hpp
+  includes/Phash.hpp
   )
 
 if(${NO_DATABASE})
