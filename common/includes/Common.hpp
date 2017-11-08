@@ -23,9 +23,7 @@
 #ifndef CHAPP_COMMON_COMMON_H
 #define CHAPP_COMMON_COMMON_H
 
-#ifdef NO_DATABASE
-#include "NoDatabaseGlue.hpp"
-#endif
+#include "GroupTypes.hpp"
 
 #include <array>
 #include <random>
