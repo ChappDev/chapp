@@ -23,8 +23,12 @@
 #ifndef CHAPP_COMMON_PHASH_H
 #define CHAPP_COMMON_PHASH_H
 
+#include <algorithm>
 #include <array>
 #include <random>
+#include <stdexcept>
+#include <string>
+
 
 namespace Chapp {
     using std::array;
@@ -43,7 +47,59 @@ namespace Chapp {
 
             std::generate(start, end, [&] () { return dist(mte); });
         }
-    }
+
+
+        // https://stackoverflow.com/a/3382894/5279817
+        template<class T>
+        string string_to_hex(const T& in) {
+            return string_to_hex(static_cast<string>(in));
+        }
+
+        template<class T = string>
+        string string_to_hex(const string& input) {
+            constexpr auto lut = "0123456789ABCDEF";
+            size_t len = input.length();
+
+            string output;
+            output.reserve(2 * len);
+
+            for (size_t i = 0; i < len; ++i) {
+                const unsigned char c = input[i];
+                output.push_back(lut[c >> 4]);
+                output.push_back(lut[c & 15]);
+            }
+
+            return output;
+        }
+
+        inline string hex_to_string(const string& input) {
+            constexpr auto lut = "0123456789ABCDEF";
+            size_t len = input.length();
+            if ((len & 1) != 0u) {
+                throw std::invalid_argument("odd length");
+            }
+
+            std::string output;
+            output.reserve(len / 2);
+            for (size_t i = 0; i < len; i += 2) {
+                char a = input[i];
+                const char* p = std::lower_bound(lut, lut + 16, a);
+                if (*p != a) {
+                    throw std::invalid_argument("not a hex digit");
+                }
+
+                char b = input[i + 1];
+                const char* q = std::lower_bound(lut, lut + 16, b);
+                if (*q != b) {
+                    throw std::invalid_argument("not a hex digit");
+                }
+
+                output.push_back(((p - lut) << 4) | (q - lut));
+            }
+
+            return output;
+        }
+    }  // namespace Util
 
     class Phash {
         static constexpr std::size_t PHASH_SIZE = 20;
@@ -68,9 +124,7 @@ namespace Chapp {
         }
 
         void randFill() {
-            // 1 BECAUSE "IT SHOULD BE CONVERTIBLE TO STRING AND HAVE NO \0"
-            // I HATE YOU, GEORGE
-            Util::fill_with_random_values(uarr.begin(), uarr.end(), 1, UINT8_MAX);
+            Util::fill_with_random_values(uarr.begin(), uarr.end(), 0, UINT8_MAX);
         }
 
         explicit Phash(const string& str) {
@@ -91,6 +145,6 @@ namespace Chapp {
 
     };
 
-}
+} // namespace Chapp
 
 #endif
