@@ -48,7 +48,9 @@ namespace Chapp {
         }
 
         UserFactory(const UserFactory&) = delete;
-        const UserFactory& operator=(const UserFactory&) = delete;
+        UserFactory& operator=(const UserFactory&) = delete;
+        UserFactory(UserFactory&&) = delete;
+        UserFactory& operator=(UserFactory&&) = delete;
 
     private:
         UserFactory() = default;
@@ -91,8 +93,10 @@ namespace Chapp {
             return instance;
         }
 
-        GroupFactory(const UserFactory&) = delete;
-        const GroupFactory& operator=(const UserFactory&) = delete;
+        GroupFactory(const GroupFactory&) = delete;
+        GroupFactory& operator=(const GroupFactory&) = delete;
+        GroupFactory(GroupFactory&&) = delete;
+        GroupFactory& operator=(GroupFactory&&) = delete;
 
     private:
         GroupFactory() = default;

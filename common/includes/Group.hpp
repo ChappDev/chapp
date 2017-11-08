@@ -42,6 +42,10 @@ namespace Chapp {
     public:
         Group() = delete;
         virtual ~Group() = default;
+        Group(const Group&) = default;
+        Group& operator=(const Group&) = default;
+        Group(Group&&) = default;
+        Group& operator=(Group&&) = default;
 
     protected:
         /*!
@@ -50,7 +54,7 @@ namespace Chapp {
          * @param gname group name
          * @param users map of users in group by their ids
          */
-        Group(int32_t gid, string gname, map<int32_t, User*>  users);
+        Group(int32_t gid, GroupType gtype, string gname, map<int32_t, User*> users);
 
     public:
         /*!
@@ -142,8 +146,8 @@ namespace Chapp {
 
     public:
         int32_t id;
-        string name;
         GroupType type;
+        string name;
 
 
     protected:

@@ -48,32 +48,32 @@ namespace Chapp {
      * @brief Minimal group struct, used in API
      */
     struct MiniGroup {
-        int32_t id{};     /**< Group id*/
+        int32_t id;     /**< Group id*/
         string name;    /**< Group name*/
         GroupType type; /**< Group type*/
 
-        MiniGroup() = default;
+        MiniGroup() = delete;
     };
 
     /*!
      * @brief Struct representing "invite" which allows user to join group
      */
     struct GroupInvite {
-        phash hash{};       /**< hash for group:id */
-        int32_t for_uid{};  /**< uid for which this invite is made */
+        phash hash;       /**< hash for group:id */
+        int32_t for_uid;  /**< uid for which this invite is made */
         MiniGroup group;  /**< group for which this invite is made */
 
-        GroupInvite() = default;
+        GroupInvite() = delete;
     };
 
     /*!
      * @brief Minimal group struct, used in API
      */
     struct MiniUser {
-        int32_t id{};      /**< User id*/
+        int32_t id;      /**< User id*/
         string username; /**< Username*/
 
-        MiniUser() = default;
+        MiniUser() = delete;
     };
 
     /*!
@@ -83,7 +83,7 @@ namespace Chapp {
         int32_t from_uid; /**< Message author */
         int32_t to_gid;   /**< Group to which this message is sent*/
 
-        Message() = default;
+        Message() = delete;
     };
 
     /*!
@@ -92,7 +92,7 @@ namespace Chapp {
     struct TextMessage : Message {
         string text; /**< Message contents */
 
-        TextMessage() = default;
+        TextMessage() = delete;
     };
 
     // https://stackoverflow.com/a/41154116/5279817

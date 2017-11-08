@@ -28,8 +28,9 @@
 
 namespace Chapp {
 
-    Group::Group(int32_t gid, string gname, map<int32_t, User*>  users)
+    Group::Group(int32_t gid, GroupType gtype, string gname, map<int32_t, User*>  users)
             : id(gid)
+            , type(gtype)
             , name(std::move(gname))
             , users_by_id(std::move(users))
     {};
@@ -109,10 +110,8 @@ namespace Chapp {
     }
 
     PublicGroup::PublicGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users)
-            : Group(gid, gname, users)
-    {
-        type = GroupType::Public;
-    }
+            : Group(gid, GroupType::Public, gname, users)
+    {}
 
     phash PublicGroup::gen_hash(int32_t uid) const {
         (void) uid;
@@ -131,10 +130,9 @@ namespace Chapp {
     }
 
     ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash)
-            : Group(gid, gname, users)
-            , hash(ghash) {
-        type = GroupType::Protected;
-    }
+            : Group(gid, GroupType::Protected, gname, users)
+            , hash(ghash)
+    {}
 
     phash ProtectedGroup::gen_hash(int32_t uid) const {
         (void) uid;
@@ -153,11 +151,9 @@ namespace Chapp {
     }
 
     PrivateGroup::PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash)
-            : Group(gid, gname, users)
+            : Group(gid, GroupType::Private, gname, users)
             , hash(ghash)
-    {
-        type = GroupType::Private;
-    }
+    {}
 
     // TODO(stek29): Properly gen/check hashes for uid
     phash PrivateGroup::gen_hash(int32_t uid) const {

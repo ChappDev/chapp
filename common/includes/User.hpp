@@ -44,7 +44,10 @@ namespace Chapp {
     public:
         User() = delete;
         User(const User&) = delete;
-        const User& operator=(const User&) = delete;
+        User& operator=(const User&) = delete;
+        User(User &&) = delete;
+        User& operator=(User &&) = delete;
+
         ~User();
 
     private:
