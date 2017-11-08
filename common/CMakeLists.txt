@@ -25,7 +25,6 @@ if(${NO_DATABASE})
   set(SOURCE_FILES
     ${SOURCE_FILES}
     test-includes/GroupFactory.hpp
-    test-includes/NoDatabaseGlue.hpp
     )
 endif(${NO_DATABASE})
 
@@ -38,6 +37,14 @@ if(${NO_DATABASE})
   target_compile_definitions(chapp_common PRIVATE
     NO_DATABASE
   )
+else()
+  find_path(DATABASE_INCLUDES
+    names Database.h GroupFactory.hpp
+    paths ${CMAKE_SOURCE_DIR}/redis/includes)
+
+  target_include_directories(chapp_common PUBLIC
+    ${DATABASE_INCLUDES}
+    )
 endif(${NO_DATABASE})
 
 target_include_directories(chapp_common PUBLIC

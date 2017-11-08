@@ -20,13 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_NODATABASEGLUE_H
-#define CHAPP_COMMON_NODATABASEGLUE_H
+#ifndef CHAPP_COMMON_GROUPTYPES_H
+#define CHAPP_COMMON_GROUPTYPES_H
 
-/*!
- * this file exists because gabolaev is lazy to import
- * common.hpp into database
- */
+#include <type_traits>
 
 namespace Chapp {
 
@@ -35,6 +32,16 @@ namespace Chapp {
         Private,    // Listed, but Password protected
         Protected,  // Unlisted, can be only invited to
     };
+
+    template<class EnumCls>
+    constexpr auto CastFromEnum(EnumCls type) {
+        return static_cast<typename std::underlying_type<EnumCls>::type>(type);
+    }
+
+    template<class EnumCls>
+    constexpr auto CastToEnum(typename std::underlying_type<EnumCls>::type from) {
+        return static_cast<EnumCls>(from);
+    }
 
 }  // namespace Chapp
 
