@@ -71,3 +71,6 @@ cmake-build-debug/
 
 ## File-based project format:
 *.iws
+
+## Another
+dump.rdb

@@ -26,6 +26,7 @@
 #include <cpp_redis/cpp_redis>
 #include <Common.hpp>
 #include <GroupTypes.hpp>
+#include <tuple>
 
 enum typeOfId{
     GROUP,
@@ -43,7 +44,7 @@ public:
     std::string incrementNowId(typeOfId type);
 
     int addGroup(Chapp::GroupType type, std::string name, std::string hash);
-    std::map<int, std::string> getListOfGroups(Chapp::GroupType type);
+    std::map<int, std::pair<std::string, Chapp::GroupType>> getListOfGroups();
     void deleteGroup(Chapp::GroupType type, int gid);
 
     int addUser(std::string username);

@@ -71,11 +71,11 @@ namespace Chapp {
 
     private:
         Database *obj;
-        GroupFactory() = default;
+        GroupFactory();
 
     public:
         Group* by_id(int32_t gid) const {
-
+            return nullptr;
         };
 
         void remove(Group* group);
@@ -85,12 +85,12 @@ namespace Chapp {
 
         ~GroupFactory() {
             for (auto &it : groups_by_id) {
-                delete it.second;
+                delete it.second.first;
             }
         }
 
     private:
-        void moderateCachedGroups();
+        void moderateCachedGroups(void *ptr);
         map<int32_t, std::pair<Group*, time_t>> groups_by_id;
     };
 
