@@ -37,8 +37,8 @@
  * class GroupFactory {
  * public:
  *   GroupFactory& Instance();
- *   Group* by_id(int32_t gid);
- *   void remove_by_id(int32_t gid);
+ *   Group* get(GroupType type, int32_t gid);
+ *   void remove(Group *);
  *
  *   template<class... Args>
  *   Group* construct(GroupType type, Args&&... args);
@@ -66,18 +66,25 @@ namespace Chapp {
         GroupFactory() = default;
 
     public:
-        Group* by_id(int32_t gid) const {
+        Group* get(GroupType type, int32_t gid) const {
             auto it = groups_by_id.find(gid);
 
             if (it == groups_by_id.end()) {
                 return nullptr;
             }
 
+            if (it->second->type != type) {
+                // Just a safety check
+                return nullptr;
+            }
+
             return it->second;
         };
 
-        void remove_by_id(int32_t gid) {
-            groups_by_id.erase(gid);
+        void remove(Group* group) {
+            if (group != nullptr) {
+                groups_by_id.erase(group->id);
+            }
         }
 
         template<class... Args>

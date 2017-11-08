@@ -99,7 +99,7 @@ namespace Chapp {
 
         // TODO(stek): This can (and will) blow up one day
         if (users_by_id.empty()) {
-            GroupFactory::Instance().remove_by_id(id);
+            GroupFactory::Instance().remove(this);
         }
 
         return Error::Ok;
