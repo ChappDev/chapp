@@ -49,7 +49,7 @@ namespace Chapp {
      * @brief Struct representing "invite" which allows user to join group
      */
     struct GroupInvite {
-        phash hash;       /**< hash for group:id */
+        Phash hash{};       /**< hash for group:id */
         int32_t for_uid;  /**< uid for which this invite is made */
         MiniGroup group;  /**< group for which this invite is made */
 

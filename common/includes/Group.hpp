@@ -79,7 +79,7 @@ namespace Chapp {
          * @param hash hash, which has to be valid for uid
          * @return Ok on success
          */
-        Error join(int32_t uid, const phash& hash);
+        Error join(int32_t uid, const Phash& hash);
 
         /*!
          * Leave group
@@ -121,7 +121,7 @@ namespace Chapp {
          * @param uid user id
          * @return hash guaranteed to be valid for this uid
          */
-        virtual phash gen_hash(int32_t uid) const = 0;
+        virtual Phash gen_hash(int32_t uid) const = 0;
 
         /*!
          * Check hash for this uid, probably generated via gen_hash
@@ -129,7 +129,7 @@ namespace Chapp {
          * @param hash hash recieved from user
          * @return true if hash is valid and user can join, false if not
          */
-        virtual bool check_hash(int32_t uid, const phash& hash) const = 0;
+        virtual bool check_hash(int32_t uid, const Phash& hash) const = 0;
 
         /*!
          * Create GroupInvite for user
@@ -180,13 +180,13 @@ namespace Chapp {
          * Generate hash for uid
          * @return 0-filled hash
          */
-        phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(int32_t uid) const override;
 
         /*!
          * Check hash for uid
          * @return always true
          */
-        bool check_hash(int32_t uid, const phash& hash) const override;
+        bool check_hash(int32_t uid, const Phash& hash) const override;
 
     };
 
@@ -201,7 +201,7 @@ namespace Chapp {
          * @param creator user creating group
          * @param hash group password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, User* creator, phash ghash);
+        ProtectedGroup(int32_t gid, const string& gname, User* creator, Phash ghash);
 
         /*!
          * Construct group
@@ -210,22 +210,22 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash);
+        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash);
 
     private:
         /*!
          * Generate hash
          * @return groups password hash, common for all users
          */
-        phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(int32_t uid) const override;
 
         /*!
          * Check hash
          * @return true if hash matches group's hash
          */
-        bool check_hash(int32_t uid, const phash& hash) const override;
+        bool check_hash(int32_t uid, const Phash& hash) const override;
 
-        phash hash;
+        Phash hash;
 
     };
 
@@ -248,22 +248,22 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash group's hash
          */
-        PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash);
+        PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash);
 
     private:
         /*!
          * Generate hash
          * @return hash valid for uid
          */
-        phash gen_hash(int32_t uid) const override;
+        Phash gen_hash(int32_t uid) const override;
 
         /*!
          * Check hash
          * @return true if hash is valid for this uid
          */
-        bool check_hash(int32_t uid, const phash& hash) const override;
+        bool check_hash(int32_t uid, const Phash& hash) const override;
 
-        phash hash;
+        Phash hash;
 
     };
 

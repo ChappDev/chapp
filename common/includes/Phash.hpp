@@ -61,6 +61,12 @@ namespace Chapp {
             return this->uarr == other.uarr;
         }
 
+        static Phash RandFilled() {
+            Phash ret{};
+            ret.randFill();
+            return ret;
+        }
+
         void randFill() {
             // 1 BECAUSE "IT SHOULD BE CONVERTIBLE TO STRING AND HAVE NO \0"
             // I HATE YOU, GEORGE
@@ -76,7 +82,7 @@ namespace Chapp {
             std::copy(c_str, c_str + PHASH_SIZE, uarr.begin());
         }
 
-        explicit operator string() {
+        explicit operator string() const {
             return std::string(uarr.begin(), uarr.end());
         }
 
@@ -84,14 +90,6 @@ namespace Chapp {
         uarr_t uarr{};
 
     };
-
-    using phash = Phash;
-
-    inline phash gen_rand_phash() {
-        phash ret{};
-        ret.randFill();
-        return ret;
-    }
 
 }
 

@@ -30,9 +30,9 @@
 namespace Chapp {
 
     User::User(int32_t uid, const string& username)
-            : User(uid, username, gen_rand_phash()) {};
+        : User(uid, username, Phash::RandFilled()) {};
 
-    User::User(int32_t uid, string username, phash hash)
+    User::User(int32_t uid, string username, Phash hash)
             : id(uid)
             , username(std::move(username))
             , pass_hash(hash)

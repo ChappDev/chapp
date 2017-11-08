@@ -54,7 +54,7 @@ namespace Chapp {
         friend class UserFactory; // only allow construct users via UserFactory
 
         User(int32_t uid, const string& username);
-        User(int32_t uid, string username, phash hash);
+        User(int32_t uid, string username, Phash hash);
 
     public:
         /*!
@@ -104,7 +104,7 @@ namespace Chapp {
         string username;
 
     private:
-        phash pass_hash;
+        Phash pass_hash;
         map<int32_t, GroupInvite> invites_by_gid;
         set<int32_t> joined_groups;
         time_t last_activity;
