@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_PLACEHOLDERS_H
-#define CHAPP_COMMON_PLACEHOLDERS_H
+#ifndef CHAPP_COMMON_USERFACTORY_H
+#define CHAPP_COMMON_USERFACTORY_H
 
 #include "Common.hpp"
 #include "Group.hpp"
@@ -75,65 +75,6 @@ namespace Chapp {
 
     private:
         map<int32_t, User*> users_by_id;
-
-    };
-
-    class GroupFactory {
-    public:
-        static GroupFactory& getInstance()
-        {
-            static GroupFactory instance; // Guaranteed to be destroyed.
-            // Instantiated on first use.
-            return instance;
-        }
-
-        GroupFactory(const GroupFactory&) = delete;
-        GroupFactory& operator=(const GroupFactory&) = delete;
-        GroupFactory(GroupFactory&&) = delete;
-        GroupFactory& operator=(GroupFactory&&) = delete;
-
-    private:
-        GroupFactory() = default;
-
-    public:
-        Group* by_id(int32_t uid) const {
-            auto it = groups_by_id.find(uid);
-
-            if (it == groups_by_id.end()) {
-                return nullptr;
-            }
-
-            return it->second;
-        };
-
-        template<class... Args>
-        Group* construct(GroupType type, Args&&... args) {
-            Group *group = nullptr;
-            switch (type) {
-                case GroupType::Public:
-                    group = new PublicGroup(args...);
-                    break;
-                case GroupType::Private:
-                    group = new PrivateGroup(args...);
-                    break;
-                case GroupType::Protected:
-                    group = new ProtectedGroup(args...);
-                    break;
-            }
-
-            groups_by_id.insert(std::make_pair(group->id, group));
-
-            return group;
-        }
-
-        ~GroupFactory() {
-            for (auto &it : groups_by_id) {
-                delete it.second;
-            }
-        }
-
-    private:
-        map<int32_t, Group*> groups_by_id;
 
     };
 
