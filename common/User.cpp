@@ -36,7 +36,7 @@ namespace Chapp {
             : id(uid)
             , username(std::move(username))
             , pass_hash(hash)
-            , last_activity(time(nullptr)) // Might this become a bottleneck?
+            , last_activity(Util::get_current_ts())
     {};
 
     User::~User() {

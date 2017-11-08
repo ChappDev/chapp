@@ -107,7 +107,7 @@ namespace Chapp {
         Phash pass_hash;
         map<chapp_id_t, GroupInvite> invites_by_gid;
         set<chapp_id_t> joined_groups;
-        time_t last_activity;
+        timestamp_t last_activity;
 
     };
 

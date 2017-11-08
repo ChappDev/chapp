@@ -28,9 +28,11 @@
 #include <random>
 #include <stdexcept>
 #include <string>
+#include <ctime>
 
 
 namespace Chapp {
+    using timestamp_t = time_t;
 
     using std::array;
     using std::string;
@@ -74,7 +76,10 @@ namespace Chapp {
         }
 
         string hex_to_string(const string& input);
-        
+
+        inline timestamp_t get_current_ts() {
+            return time(nullptr);
+        }
     }  // namespace Util
 
 } // namespace Chapp
