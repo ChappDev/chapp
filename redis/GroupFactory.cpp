@@ -40,8 +40,9 @@ namespace Chapp {
                     forDelete.insert(iter->first);
             }
             for_each(forDelete.begin(), forDelete.end(), [=](int _id){
-                delete groups_by_id[_id].first;
-                groups_by_id.erase(_id);
+                auto it = this->groups_by_id.find(_id);
+                delete it->second.first;
+                groups_by_id.erase(it);
             });
             locker.unlock();
             sleep(SLEEP_TIME);
@@ -73,4 +74,6 @@ namespace Chapp {
             }
             return group;
     }
+
 }
+
