@@ -75,7 +75,7 @@ namespace Chapp {
 
     public:
         Group* by_id(int32_t gid) const {
-
+            return nullptr;
         };
 
         void remove(Group* group);
@@ -84,9 +84,9 @@ namespace Chapp {
         Group* construct(GroupType type, Args&&... args);
 
         ~GroupFactory() {
-//            for (auto &it : groups_by_id) {
-//                delete it.second;
-//            }
+            for (auto &it : groups_by_id) {
+                delete it.second.first;
+            }
         }
 
     private:
