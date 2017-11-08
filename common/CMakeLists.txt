@@ -45,6 +45,8 @@ else()
   target_include_directories(chapp_common PUBLIC
     ${DATABASE_INCLUDES}
     )
+
+  target_link_libraries(chapp_common redis)
 endif(${NO_DATABASE})
 
 target_include_directories(chapp_common PUBLIC
