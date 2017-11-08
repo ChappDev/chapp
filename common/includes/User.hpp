@@ -23,10 +23,10 @@
 #ifndef CHAPP_COMMON_USER_H
 #define CHAPP_COMMON_USER_H
 
-#include <string>
+#include <ctime>
 #include <map>
 #include <set>
-#include <ctime>
+#include <string>
 
 #include "Common.hpp"
 #include "Session.hpp"
@@ -50,7 +50,7 @@ namespace Chapp {
         friend class UserFactory; // only allow construct users via UserFactory
 
         User(int32_t uid, const string& username);
-        User(int32_t uid, const string& username, phash hash);
+        User(int32_t uid, string username, phash hash);
 
     public:
         /*!
@@ -82,14 +82,14 @@ namespace Chapp {
          * @return true on success
          */
         bool remove_from_group(const Group& group);
-        // TODO: add "unsafe/fast" version to be called from destructor and safe version
+        // TODO(stek): add "unsafe/fast" version to be called from destructor and safe version
 
         /*!
          * Create minigroup representing this group
          * @return
          */
         MiniUser to_miniuser() const {
-            // TODO: Optimize by having cached version
+            // TODO(stek): Optimize by having cached version
             return {
                     .id = id,
                     .username = username,
@@ -108,6 +108,6 @@ namespace Chapp {
 
     };
 
-}
+}  // namespace Chapp
 
 #endif

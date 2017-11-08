@@ -27,3 +27,4 @@ target_include_directories(chapp_common PUBLIC
 target_compile_definitions(chapp_common PRIVATE
         CHAPP_COMMON_USE_PLACEHOLDERS
         )
+

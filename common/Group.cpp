@@ -21,18 +21,20 @@
 // SOFTWARE.
 
 #include "Group.hpp"
-#include "User.hpp"
+
 #include "Placeholders.hpp"
+#include "User.hpp"
+#include <utility>
 
 namespace Chapp {
 
-    Group::Group(int32_t gid, const string& gname, const map<int32_t, User*>& users)
+    Group::Group(int32_t gid, string gname, map<int32_t, User*>  users)
             : id(gid)
-            , name(gname)
-            , users_by_id(users)
+            , name(std::move(gname))
+            , users_by_id(std::move(users))
     {};
 
-    bool Group::broadcast(int32_t uid, Message msg) {
+    bool Group::broadcast(int32_t  /*uid*/, Message msg) {
         for (const auto &pair : users_by_id) {
             pair.second->deliver_message(msg);
         }
@@ -41,33 +43,39 @@ namespace Chapp {
     }
 
     bool Group::invite(int32_t curr_uid, int32_t new_uid) {
-        if (!has_user(curr_uid))
+        if (!has_user(curr_uid)) {
             return false; // curr_uid should be in group
+        }
 
-        if (has_user(new_uid))
+        if (has_user(new_uid)) {
             return false; // new_uid already in group
+        }
 
         auto new_user = UserFactory::getInstance().by_id(new_uid);
 
-        if (new_user == nullptr)
+        if (new_user == nullptr) {
             return false; // invalid user
+        }
 
         return new_user->invite(curr_uid, make_invite(new_uid));
     }
 
     bool Group::join(int32_t uid, const phash& hash) {
-        if (!check_hash(uid, hash))
+        if (!check_hash(uid, hash)) {
             return false; // Wrong hash
+        }
 
         auto user = UserFactory::getInstance().by_id(uid);
 
-        if (user == nullptr)
+        if (user == nullptr) {
             return false; // invalid user
+        }
 
 
         auto ret = user->add_to_group(*this);
-        if (!ret)
+        if (!ret) {
             return ret; // failed in add_to_group
+        }
 
         users_by_id.insert(std::make_pair(user->id, user));
 
@@ -76,14 +84,16 @@ namespace Chapp {
 
     bool Group::leave(int32_t uid) {
         auto it = users_by_id.find(uid);
-        if (it == users_by_id.end())
+        if (it == users_by_id.end()) {
             return false; // no such user in group
+        }
 
         auto user = it->second;
 
         auto ret = user->remove_from_group(*this);
-        if (!ret)
+        if (!ret) {
            return ret; // failed in remove_from_group
+        }
 
         users_by_id.erase(it);
 
@@ -108,10 +118,10 @@ namespace Chapp {
 
     phash PublicGroup::gen_hash(int32_t uid) const {
         (void) uid;
-        return phash();
+        return {};
     }
 
-    bool PublicGroup::check_hash(int32_t uid, const phash &hash) const {
+    bool PublicGroup::check_hash(int32_t uid, const phash & /*hash*/) const {
         (void) uid;
         return true;
     }
@@ -151,7 +161,7 @@ namespace Chapp {
         type = GroupType::Private;
     }
 
-    // TODO: Properly gen/check hashes for uid
+    // TODO(stek29): Properly gen/check hashes for uid
     phash PrivateGroup::gen_hash(int32_t uid) const {
         (void) uid;
         return hash;
@@ -162,4 +172,4 @@ namespace Chapp {
         return hash == this->hash;
     }
 
-}
+} // namespace Chapp

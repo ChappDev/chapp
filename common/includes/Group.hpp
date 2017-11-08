@@ -23,11 +23,11 @@
 #ifndef CHAPP_COMMON_GROUP_H
 #define CHAPP_COMMON_GROUP_H
 
-#include <string>
-#include <map>
-#include <vector>
 #include "Common.hpp"
 #include "User.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 namespace Chapp {
 
@@ -49,7 +49,7 @@ namespace Chapp {
          * @param gname group name
          * @param users map of users in group by their ids
          */
-        Group(int32_t gid, const string& gname, const map<int32_t, User*>& users);
+        Group(int32_t gid, string gname, map<int32_t, User*>  users);
 
     public:
         /*!
@@ -87,7 +87,7 @@ namespace Chapp {
          * List users in group
          * @return Vector of users in group
          */
-        // TODO: Optimize by having cached vector => ret const ref to it?
+        // TODO(stek): Optimize by having cached vector => ret const ref to it?
         // vector<MiniUser> list_users() const;
 
         /*!
@@ -95,7 +95,7 @@ namespace Chapp {
          * @return
          */
         MiniGroup to_minigroup() const {
-            // TODO: Optimize by having cached version
+            // TODO(stek): Optimize by having cached version
             return {
                     .id = id,
                     .name = name,
@@ -196,7 +196,7 @@ namespace Chapp {
          * @param creator user creating group
          * @param hash group password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, User* creator, phash hash);
+        ProtectedGroup(int32_t gid, const string& gname, User* creator, phash ghash);
 
         /*!
          * Construct group
@@ -205,7 +205,7 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash hash);
+        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash);
 
     private:
         /*!
@@ -262,6 +262,6 @@ namespace Chapp {
 
     };
 
-}
+}  // namespace Chapp
 
 #endif

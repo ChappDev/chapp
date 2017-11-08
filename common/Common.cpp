@@ -25,9 +25,9 @@
 namespace Chapp {
 
     phash gen_rand_phash() {
-        auto ret = phash();
+        phash ret{};
         fill_with_random_values(ret.begin(), ret.end(), 0, UINT8_MAX);
         return ret;
-    };
+    }
 
-}
+} // namespace Chapp

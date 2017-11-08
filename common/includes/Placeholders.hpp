@@ -30,8 +30,8 @@
 #define CHAPP_COMMON_PLACEHOLDERS_H
 
 #include "Common.hpp"
-#include "User.hpp"
 #include "Group.hpp"
+#include "User.hpp"
 
 #include <map>
 #include <memory>
@@ -57,8 +57,9 @@ namespace Chapp {
         User* by_id(int32_t uid) const {
             auto it = users_by_id.find(uid);
 
-            if (it == users_by_id.end())
+            if (it == users_by_id.end()) {
                 return nullptr;
+            }
 
             return it->second;
         };
@@ -100,8 +101,9 @@ namespace Chapp {
         Group* by_id(int32_t uid) const {
             auto it = groups_by_id.find(uid);
 
-            if (it == groups_by_id.end())
+            if (it == groups_by_id.end()) {
                 return nullptr;
+            }
 
             return it->second;
         };
@@ -137,6 +139,6 @@ namespace Chapp {
 
     };
 
-}
+}  // namespace Chapp
 
 #endif

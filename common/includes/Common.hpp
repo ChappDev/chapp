@@ -24,17 +24,17 @@
 #define CHAPP_COMMON_COMMON_H
 
 #include <array>
-#include <string>
 #include <random>
+#include <string>
 
-#include <inttypes.h>
+#include <cinttypes>
 
 namespace Chapp {
 
     using std::array;
     using std::string;
 
-    // TODO: Turn into a class
+    // TODO(stek): Turn into a class
     typedef array<uint8_t, 20> phash;
     phash gen_rand_phash();
 
@@ -48,7 +48,7 @@ namespace Chapp {
      * @brief Minimal group struct, used in API
      */
     struct MiniGroup {
-        int32_t id;     /**< Group id*/
+        int32_t id{};     /**< Group id*/
         string name;    /**< Group name*/
         GroupType type; /**< Group type*/
 
@@ -59,8 +59,8 @@ namespace Chapp {
      * @brief Struct representing "invite" which allows user to join group
      */
     struct GroupInvite {
-        phash hash;       /**< hash for group:id */
-        int32_t for_uid;  /**< uid for which this invite is made */
+        phash hash{};       /**< hash for group:id */
+        int32_t for_uid{};  /**< uid for which this invite is made */
         MiniGroup group;  /**< group for which this invite is made */
 
         GroupInvite() = default;
@@ -70,7 +70,7 @@ namespace Chapp {
      * @brief Minimal group struct, used in API
      */
     struct MiniUser {
-        int32_t id;      /**< User id*/
+        int32_t id{};      /**< User id*/
         string username; /**< Username*/
 
         MiniUser() = default;
@@ -96,7 +96,7 @@ namespace Chapp {
     };
 
     // https://stackoverflow.com/a/41154116/5279817
-    // TODO: Crypto safe stuff
+    // TODO(stek): Crypto safe stuff
     template< class Iter, class int_t >
     void fill_with_random_values( Iter start, Iter end, int_t min, int_t max)
     {
@@ -107,6 +107,6 @@ namespace Chapp {
 
         std::generate(start, end, [&] () { return dist(mte); });
     }
-}
+} // namespace Chapp
 
 #endif
