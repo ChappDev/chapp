@@ -62,7 +62,7 @@ namespace Chapp {
         return new_user->invite(curr_uid, make_invite(new_uid));
     }
 
-    Error Group::join(int32_t uid, const phash& hash) {
+    Error Group::join(int32_t uid, const Phash& hash) {
         if (!check_hash(uid, hash)) {
             return Error::IncorrectHash; // Wrong hash
         }
@@ -99,7 +99,7 @@ namespace Chapp {
 
         // TODO(stek): This can (and will) blow up one day
         if (users_by_id.empty()) {
-            GroupFactory::Instance().remove_by_id(id);
+            GroupFactory::Instance().remove(this);
         }
 
         return Error::Ok;
@@ -119,55 +119,55 @@ namespace Chapp {
             : Group(gid, GroupType::Public, gname, users)
     {}
 
-    phash PublicGroup::gen_hash(int32_t uid) const {
+    Phash PublicGroup::gen_hash(int32_t uid) const {
         (void) uid;
         return {};
     }
 
-    bool PublicGroup::check_hash(int32_t uid, const phash & /*hash*/) const {
+    bool PublicGroup::check_hash(int32_t uid, const Phash & /*hash*/) const {
         (void) uid;
         return true;
     }
 
-    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, User* creator, phash ghash)
+    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, User* creator, Phash ghash)
             : ProtectedGroup(gid, gname, { std::make_pair(creator->id, creator) }, ghash)
     {
         creator->add_to_group(*this);
     }
 
-    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash)
+    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash)
             : Group(gid, GroupType::Protected, gname, users)
             , hash(ghash)
     {}
 
-    phash ProtectedGroup::gen_hash(int32_t uid) const {
+    Phash ProtectedGroup::gen_hash(int32_t uid) const {
         (void) uid;
         return hash;
     }
 
-    bool ProtectedGroup::check_hash(int32_t uid, const phash &hash) const {
+    bool ProtectedGroup::check_hash(int32_t uid, const Phash &hash) const {
         (void) uid;
         return hash == this->hash;
     }
 
     PrivateGroup::PrivateGroup(int32_t gid, const string& gname, User* creator)
-            : PrivateGroup(gid, gname, { std::make_pair(creator->id, creator) }, gen_rand_phash())
+    : PrivateGroup(gid, gname, { std::make_pair(creator->id, creator) }, Phash::RandFilled())
     {
         creator->add_to_group(*this);
     }
 
-    PrivateGroup::PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash)
+    PrivateGroup::PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash)
             : Group(gid, GroupType::Private, gname, users)
             , hash(ghash)
     {}
 
     // TODO(stek): Properly gen/check hashes for uid
-    phash PrivateGroup::gen_hash(int32_t uid) const {
+    Phash PrivateGroup::gen_hash(int32_t uid) const {
         (void) uid;
         return hash;
     }
 
-    bool PrivateGroup::check_hash(int32_t uid, const phash &hash) const {
+    bool PrivateGroup::check_hash(int32_t uid, const Phash &hash) const {
         (void) uid;
         return hash == this->hash;
     }
