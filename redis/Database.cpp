@@ -51,7 +51,7 @@ int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash
     auto newGroupId = incrementNowId(GROUP);
     client.hset("gid-name", newGroupId, name);
     client.hset("gid-hash", newGroupId, hash);
-    client.hset("gid-type", newGroupId, hash);
+    client.hset("gid-type", newGroupId, std::to_string(CastFromEnum(type)));
     client.sync_commit();
     return stoi(newGroupId);
 }
@@ -70,7 +70,7 @@ std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroup
         auto key = stoi(iter->as_string());
         auto typeRequest = client.hget("gid-type", iter->as_string());
         client.sync_commit();
-        Chapp::GroupType type = Chapp::CastToEnum<Chapp::GroupType>(typeRequest.get().as_integer());
+        Chapp::GroupType type = Chapp::CastToEnum<Chapp::GroupType>(stoi(typeRequest.get().as_string()));
 
         if (++iter == parsedResponseNames.end()) break;
 

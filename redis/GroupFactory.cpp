@@ -29,7 +29,7 @@ std::mutex locker;
 
 namespace Chapp {
 
-    void GroupFactory::moderateCachedGroups(void *ptr) {
+    void GroupFactory::moderateCachedGroups() {
         while (true) {
             std::cout << std::endl;
             locker.lock();

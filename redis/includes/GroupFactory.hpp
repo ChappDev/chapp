@@ -90,7 +90,7 @@ namespace Chapp {
         }
 
     private:
-        void moderateCachedGroups(void *ptr);
+        void moderateCachedGroups();
         map<int32_t, std::pair<Group*, time_t>> groups_by_id;
     };
 
