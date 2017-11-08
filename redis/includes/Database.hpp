@@ -24,12 +24,8 @@
 #define CHAPP_DATABASE_H
 
 #include <cpp_redis/cpp_redis>
-
-enum groupType{
-    PUBLIC,
-    PRIVATE,
-    PROTECTED
-};
+#include <Common.hpp>
+#include <GroupTypes.hpp>
 
 enum typeOfId{
     GROUP,
@@ -46,9 +42,9 @@ public:
 
     std::string incrementNowId(typeOfId type);
 
-    int addGroup(groupType type, std::string name);
-    std::map<int, std::string> getListOfGroups(groupType type);
-    void deleteGroup(groupType type, int gid);
+    int addGroup(Chapp::GroupType type, std::string name, std::string hash);
+    std::map<int, std::string> getListOfGroups(Chapp::GroupType type);
+    void deleteGroup(Chapp::GroupType type, int gid);
 
     int addUser(std::string username);
     void deleteUser(int uid);
