@@ -51,19 +51,18 @@ namespace Chapp {
         }
     }
 
-    bool User::deliver_message(Message msg) {
-        // TODO(stek29): send to socket
+    void User::deliver_message(Message msg) {
+        // TODO(stek): send to socket
         (void) msg;
-        return true;
     }
 
-    bool User::invite(int32_t inviter_id, const GroupInvite& invite) {
+    Error User::invite(int32_t inviter_id, const GroupInvite& invite) {
         auto gid = invite.group.id;
 
         auto it = invites_by_gid.find(gid);
 
         if (it != invites_by_gid.end()) {
-            return false; // already invited
+            return Error::AlreadyInvited; // already invited
         }
 
         invites_by_gid.insert(std::make_pair(gid, invite));
@@ -71,31 +70,31 @@ namespace Chapp {
         // TODO(stek29): notify socket
         (void) inviter_id;
 
-        return true;
+        return Error::Ok;
     };
 
-    bool User::add_to_group(const Group &group) {
+    Error User::add_to_group(const Group &group) {
         auto insert_pair = joined_groups.insert(group.id);
         if (!insert_pair.second) {
-            return false; // Not inserted
+            return Error::AlreadyInGroup; // Not inserted
         }
 
         // Database.addUserToGroup(id, group.id);
         // TODO(stek29): notify socket
         (void)0; // To disable CLion simplify
-        return true;
+        return Error::Ok;
     }
 
-    bool User::remove_from_group(const Group &group) {
+    Error User::remove_from_group(const Group &group) {
         auto removed_cnt = joined_groups.erase(group.id);
         if (removed_cnt == 0) {
-            return false; // Not erased
+            return Error::NotInGroup; // Not erased
         }
 
         // Database.removeUserFromGroup(id, group.id);
 
         (void)0; // To disable CLion simplify
-        return true;
+        return Error::Ok;
     }
 
 }  // namespace Chapp

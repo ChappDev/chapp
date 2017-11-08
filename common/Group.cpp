@@ -34,70 +34,68 @@ namespace Chapp {
             , users_by_id(std::move(users))
     {};
 
-    bool Group::broadcast(int32_t  /*uid*/, Message msg) {
+    Error Group::broadcast(int32_t  /*uid*/, Message msg) {
         for (const auto &pair : users_by_id) {
             pair.second->deliver_message(msg);
         }
 
-        return true;
+        return Error::Ok;
     }
 
-    bool Group::invite(int32_t curr_uid, int32_t new_uid) {
+    Error Group::invite(int32_t curr_uid, int32_t new_uid) {
         if (!has_user(curr_uid)) {
-            return false; // curr_uid should be in group
+            return Error::NotInGroup; // curr_uid should be in group
         }
 
         if (has_user(new_uid)) {
-            return false; // new_uid already in group
+            return Error::AlreadyInGroup; // new_uid already in group
         }
 
         auto new_user = UserFactory::getInstance().by_id(new_uid);
 
         if (new_user == nullptr) {
-            return false; // invalid user
+            return Error::InvalidUserId; // invalid user
         }
 
         return new_user->invite(curr_uid, make_invite(new_uid));
     }
 
-    bool Group::join(int32_t uid, const phash& hash) {
+    Error Group::join(int32_t uid, const phash& hash) {
         if (!check_hash(uid, hash)) {
-            return false; // Wrong hash
+            return Error::IncorrectHash; // Wrong hash
         }
 
         auto user = UserFactory::getInstance().by_id(uid);
-
         if (user == nullptr) {
-            return false; // invalid user
+            return Error::InvalidUserId; // invalid user
         }
 
-
         auto ret = user->add_to_group(*this);
-        if (!ret) {
+        if (ret != Error::Ok) {
             return ret; // failed in add_to_group
         }
 
         users_by_id.insert(std::make_pair(user->id, user));
 
-        return true;
+        return Error::Ok;
     }
 
-    bool Group::leave(int32_t uid) {
+    Error Group::leave(int32_t uid) {
         auto it = users_by_id.find(uid);
         if (it == users_by_id.end()) {
-            return false; // no such user in group
+            return Error::NotInGroup; // no such user in group
         }
 
         auto user = it->second;
 
         auto ret = user->remove_from_group(*this);
-        if (!ret) {
+        if (ret != Error::Ok) {
            return ret; // failed in remove_from_group
         }
 
         users_by_id.erase(it);
 
-        return true;
+        return Error::Ok;
     }
 
     bool Group::has_user(int32_t uid) {

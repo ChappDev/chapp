@@ -16,6 +16,7 @@ set(SOURCE_FILES
   includes/Group.hpp
   includes/Common.hpp
   includes/Placeholders.hpp
+  includes/Errors.hpp
   )
 
 add_library(chapp_common ${SOURCE_FILES})

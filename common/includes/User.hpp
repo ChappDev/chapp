@@ -29,6 +29,7 @@
 #include <string>
 
 #include "Common.hpp"
+#include "Errors.hpp"
 #include "Session.hpp"
 
 
@@ -56,32 +57,31 @@ namespace Chapp {
         /*!
          * Deliver message to user
          * @param msg message to send
-         * @return always true
          */
-        bool deliver_message(Message msg);
+        void deliver_message(Message msg);
 
         /*!
          * @brief Invite user to group
-         * DO NOT CALL FROM PUBLIC API, CALL GROUP'S invite!
+         * @note use group's invite method, don't use this directly
          * @param inviter_id id of user initiating invite
          * @param invite GroupInvite for group user is being invited to
-         * @return
+         * @return Ok on success
          */
-        bool invite(int32_t inviter_id, const GroupInvite& invite);
+        Error invite(int32_t inviter_id, const GroupInvite& invite);
 
         /*!
          * Add user to group
          * @param group Group to add to user's groups
-         * @return true on success
+         * @return Ok on success
          */
-        bool add_to_group(const Group& group);
+        Error add_to_group(const Group& group);
 
         /*!
          * Remove user from group
          * @param group Group to remove from user's groups
-         * @return true on success
+         * @return Ok on success
          */
-        bool remove_from_group(const Group& group);
+        Error remove_from_group(const Group& group);
         // TODO(stek): add "unsafe/fast" version to be called from destructor and safe version
 
         /*!

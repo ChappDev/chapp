@@ -24,6 +24,7 @@
 #define CHAPP_COMMON_GROUP_H
 
 #include "Common.hpp"
+#include "Errors.hpp"
 #include "User.hpp"
 #include <map>
 #include <string>
@@ -56,32 +57,32 @@ namespace Chapp {
          * Send message coming from uid to all users in group
          * @param uid user id of message author
          * @param msg message to send
-         * @return always true
+         * @return Ok on success
          */
-        bool broadcast(int32_t uid, Message msg);
+        Error broadcast(int32_t uid, Message msg);
 
         /*!
          * Invite user to group
          * @param curr_uid inviting user id
          * @param new_uid user id being invited
-         * @return true on success
+         * @return Ok on success
          */
-        bool invite(int32_t curr_uid, int32_t new_uid);
+        Error invite(int32_t curr_uid, int32_t new_uid);
 
         /*!
          * Join group with hash
          * @param uid user joining group
          * @param hash hash, which has to be valid for uid
-         * @return true on success
+         * @return Ok on success
          */
-        bool join(int32_t uid, const phash& hash);
+        Error join(int32_t uid, const phash& hash);
 
         /*!
          * Leave group
          * @param uid id of user leaving
-         * @return true on success
+         * @return Ok on success
          */
-        bool leave(int32_t uid);
+        Error leave(int32_t uid);
 
         /*!
          * List users in group

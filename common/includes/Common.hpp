@@ -35,7 +35,7 @@ namespace Chapp {
     using std::string;
 
     // TODO(stek): Turn into a class
-    typedef array<uint8_t, 20> phash;
+    using phash = array<uint8_t, 20>;
     phash gen_rand_phash();
 
     enum class GroupType : char {
