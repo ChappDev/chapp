@@ -20,4 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// TODO(stek): 
+#ifndef CHAPP_COMMON_ERROR_H
+#define CHAPP_COMMON_ERROR_H
+
+namespace Chapp {
+
+enum class Error {
+    Ok,
+
+    NotInGroup,
+    AlreadyInGroup,
+
+    AlreadyInvited,
+
+    InvalidUserId,
+    InvalidGroupId,
+
+    IncorrectHash,
+};
+
+}  // namespace Chapp
+
+#endif

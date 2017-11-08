@@ -23,11 +23,12 @@
 #ifndef CHAPP_COMMON_GROUP_H
 #define CHAPP_COMMON_GROUP_H
 
-#include <string>
-#include <map>
-#include <vector>
 #include "Common.hpp"
+#include "Errors.hpp"
 #include "User.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 namespace Chapp {
 
@@ -41,6 +42,10 @@ namespace Chapp {
     public:
         Group() = delete;
         virtual ~Group() = default;
+        Group(const Group&) = default;
+        Group& operator=(const Group&) = default;
+        Group(Group&&) = default;
+        Group& operator=(Group&&) = default;
 
     protected:
         /*!
@@ -49,45 +54,45 @@ namespace Chapp {
          * @param gname group name
          * @param users map of users in group by their ids
          */
-        Group(int32_t gid, const string& gname, const map<int32_t, User*>& users);
+        Group(int32_t gid, GroupType gtype, string gname, map<int32_t, User*> users);
 
     public:
         /*!
          * Send message coming from uid to all users in group
          * @param uid user id of message author
          * @param msg message to send
-         * @return always true
+         * @return Ok on success
          */
-        bool broadcast(int32_t uid, Message msg);
+        Error broadcast(int32_t uid, Message msg);
 
         /*!
          * Invite user to group
          * @param curr_uid inviting user id
          * @param new_uid user id being invited
-         * @return true on success
+         * @return Ok on success
          */
-        bool invite(int32_t curr_uid, int32_t new_uid);
+        Error invite(int32_t curr_uid, int32_t new_uid);
 
         /*!
          * Join group with hash
          * @param uid user joining group
          * @param hash hash, which has to be valid for uid
-         * @return true on success
+         * @return Ok on success
          */
-        bool join(int32_t uid, const phash& hash);
+        Error join(int32_t uid, const phash& hash);
 
         /*!
          * Leave group
          * @param uid id of user leaving
-         * @return true on success
+         * @return Ok on success
          */
-        bool leave(int32_t uid);
+        Error leave(int32_t uid);
 
         /*!
          * List users in group
          * @return Vector of users in group
          */
-        // TODO: Optimize by having cached vector => ret const ref to it?
+        // TODO(stek): Optimize by having cached vector => ret const ref to it?
         // vector<MiniUser> list_users() const;
 
         /*!
@@ -95,7 +100,7 @@ namespace Chapp {
          * @return
          */
         MiniGroup to_minigroup() const {
-            // TODO: Optimize by having cached version
+            // TODO(stek): Optimize by having cached version
             return {
                     .id = id,
                     .name = name,
@@ -141,8 +146,8 @@ namespace Chapp {
 
     public:
         int32_t id;
-        string name;
         GroupType type;
+        string name;
 
 
     protected:
@@ -196,7 +201,7 @@ namespace Chapp {
          * @param creator user creating group
          * @param hash group password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, User* creator, phash hash);
+        ProtectedGroup(int32_t gid, const string& gname, User* creator, phash ghash);
 
         /*!
          * Construct group
@@ -205,7 +210,7 @@ namespace Chapp {
          * @param users ids:users in the group
          * @param ghash password hash
          */
-        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash hash);
+        ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, phash ghash);
 
     private:
         /*!
@@ -262,6 +267,6 @@ namespace Chapp {
 
     };
 
-}
+}  // namespace Chapp
 
 #endif

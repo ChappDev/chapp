@@ -24,18 +24,18 @@
 #define CHAPP_COMMON_COMMON_H
 
 #include <array>
-#include <string>
 #include <random>
+#include <string>
 
-#include <inttypes.h>
+#include <cinttypes>
 
 namespace Chapp {
 
     using std::array;
     using std::string;
 
-    // TODO: Turn into a class
-    typedef array<uint8_t, 20> phash;
+    // TODO(stek): Turn into a class
+    using phash = array<uint8_t, 20>;
     phash gen_rand_phash();
 
     enum class GroupType : char {
@@ -52,7 +52,7 @@ namespace Chapp {
         string name;    /**< Group name*/
         GroupType type; /**< Group type*/
 
-        MiniGroup() = default;
+        MiniGroup() = delete;
     };
 
     /*!
@@ -63,7 +63,7 @@ namespace Chapp {
         int32_t for_uid;  /**< uid for which this invite is made */
         MiniGroup group;  /**< group for which this invite is made */
 
-        GroupInvite() = default;
+        GroupInvite() = delete;
     };
 
     /*!
@@ -73,7 +73,7 @@ namespace Chapp {
         int32_t id;      /**< User id*/
         string username; /**< Username*/
 
-        MiniUser() = default;
+        MiniUser() = delete;
     };
 
     /*!
@@ -83,7 +83,7 @@ namespace Chapp {
         int32_t from_uid; /**< Message author */
         int32_t to_gid;   /**< Group to which this message is sent*/
 
-        Message() = default;
+        Message() = delete;
     };
 
     /*!
@@ -92,11 +92,11 @@ namespace Chapp {
     struct TextMessage : Message {
         string text; /**< Message contents */
 
-        TextMessage() = default;
+        TextMessage() = delete;
     };
 
     // https://stackoverflow.com/a/41154116/5279817
-    // TODO: Crypto safe stuff
+    // TODO(stek): Crypto safe stuff
     template< class Iter, class int_t >
     void fill_with_random_values( Iter start, Iter end, int_t min, int_t max)
     {
@@ -107,6 +107,6 @@ namespace Chapp {
 
         std::generate(start, end, [&] () { return dist(mte); });
     }
-}
+} // namespace Chapp
 
 #endif

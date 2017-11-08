@@ -21,75 +21,80 @@
 // SOFTWARE.
 
 #include "User.hpp"
+
 #include "Group.hpp"
 #include "Placeholders.hpp"
+#include <utility>
 
 namespace Chapp {
 
     User::User(int32_t uid, const string& username)
             : User(uid, username, gen_rand_phash()) {};
 
-    User::User(int32_t uid, const string& username, phash hash)
+    User::User(int32_t uid, string username, phash hash)
             : id(uid)
-            , username(username)
+            , username(std::move(username))
             , pass_hash(hash)
             , last_activity(time(nullptr)) // Might this become a bottleneck?
     {};
 
     User::~User() {
         for (auto &group_id : joined_groups) {
-            // TODO: Avoid constructing groups just to delete user?
+            // TODO(stek): Avoid constructing groups just to delete user?
             auto group = GroupFactory::getInstance().by_id(group_id);
-            if (group == nullptr)
+            if (group == nullptr) {
                 continue; // WTF?!
+            }
 
-            // TODO: When socket is added, avoid notifying it here
+            // TODO(stek): When socket is added, avoid notifying it here
             group->leave(id);
         }
     }
 
-    bool User::deliver_message(Message msg) {
-        // TODO: send to socket
+    void User::deliver_message(Message msg) {
+        // TODO(stek): send to socket
         (void) msg;
-        return true;
     }
 
-    bool User::invite(int32_t inviter_id, const GroupInvite& invite) {
+    Error User::invite(int32_t inviter_id, const GroupInvite& invite) {
         auto gid = invite.group.id;
 
         auto it = invites_by_gid.find(gid);
 
-        if (it != invites_by_gid.end())
-            return false; // already invited
+        if (it != invites_by_gid.end()) {
+            return Error::AlreadyInvited; // already invited
+        }
 
         invites_by_gid.insert(std::make_pair(gid, invite));
 
-        // TODO: notify socket
+        // TODO(stek): notify socket
         (void) inviter_id;
 
-        return true;
+        return Error::Ok;
     };
 
-    bool User::add_to_group(const Group &group) {
+    Error User::add_to_group(const Group &group) {
         auto insert_pair = joined_groups.insert(group.id);
-        if (!insert_pair.second)
-            return false; // Not inserted
+        if (!insert_pair.second) {
+            return Error::AlreadyInGroup; // Not inserted
+        }
 
         // Database.addUserToGroup(id, group.id);
-        // TODO: notify socket
+        // TODO(stek): notify socket
         (void)0; // To disable CLion simplify
-        return true;
+        return Error::Ok;
     }
 
-    bool User::remove_from_group(const Group &group) {
+    Error User::remove_from_group(const Group &group) {
         auto removed_cnt = joined_groups.erase(group.id);
-        if (removed_cnt == 0)
-            return false; // Not erased
+        if (removed_cnt == 0) {
+            return Error::NotInGroup; // Not erased
+        }
 
         // Database.removeUserFromGroup(id, group.id);
 
         (void)0; // To disable CLion simplify
-        return true;
+        return Error::Ok;
     }
 
-}
+}  // namespace Chapp

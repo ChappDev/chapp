@@ -30,8 +30,8 @@
 #define CHAPP_COMMON_PLACEHOLDERS_H
 
 #include "Common.hpp"
-#include "User.hpp"
 #include "Group.hpp"
+#include "User.hpp"
 
 #include <map>
 #include <memory>
@@ -48,7 +48,9 @@ namespace Chapp {
         }
 
         UserFactory(const UserFactory&) = delete;
-        const UserFactory& operator=(const UserFactory&) = delete;
+        UserFactory& operator=(const UserFactory&) = delete;
+        UserFactory(UserFactory&&) = delete;
+        UserFactory& operator=(UserFactory&&) = delete;
 
     private:
         UserFactory() = default;
@@ -57,8 +59,9 @@ namespace Chapp {
         User* by_id(int32_t uid) const {
             auto it = users_by_id.find(uid);
 
-            if (it == users_by_id.end())
+            if (it == users_by_id.end()) {
                 return nullptr;
+            }
 
             return it->second;
         };
@@ -90,8 +93,10 @@ namespace Chapp {
             return instance;
         }
 
-        GroupFactory(const UserFactory&) = delete;
-        const GroupFactory& operator=(const UserFactory&) = delete;
+        GroupFactory(const GroupFactory&) = delete;
+        GroupFactory& operator=(const GroupFactory&) = delete;
+        GroupFactory(GroupFactory&&) = delete;
+        GroupFactory& operator=(GroupFactory&&) = delete;
 
     private:
         GroupFactory() = default;
@@ -100,8 +105,9 @@ namespace Chapp {
         Group* by_id(int32_t uid) const {
             auto it = groups_by_id.find(uid);
 
-            if (it == groups_by_id.end())
+            if (it == groups_by_id.end()) {
                 return nullptr;
+            }
 
             return it->second;
         };
@@ -137,6 +143,6 @@ namespace Chapp {
 
     };
 
-}
+}  // namespace Chapp
 
 #endif
