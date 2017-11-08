@@ -29,14 +29,17 @@
 
 namespace Chapp {
 
-    Group::Group(int32_t gid, GroupType gtype, string gname, map<int32_t, User*>  users)
+    Group::Group(chapp_id_t gid, GroupType gtype, string gname, map<chapp_id_t, User*>  users)
             : id(gid)
             , type(gtype)
             , name(std::move(gname))
             , users_by_id(std::move(users))
+            , last_activity(Util::get_current_ts())
     {};
 
-    Error Group::broadcast(int32_t  /*uid*/, Message msg) {
+    Error Group::broadcast(chapp_id_t  /*uid*/, Message msg) {
+        mark_active();
+
         for (const auto &pair : users_by_id) {
             pair.second->deliver_message(msg);
         }
@@ -44,7 +47,9 @@ namespace Chapp {
         return Error::Ok;
     }
 
-    Error Group::invite(int32_t curr_uid, int32_t new_uid) {
+    Error Group::invite(chapp_id_t curr_uid, chapp_id_t new_uid) {
+        mark_active();
+        
         if (!has_user(curr_uid)) {
             return Error::NotInGroup; // curr_uid should be in group
         }
@@ -62,7 +67,9 @@ namespace Chapp {
         return new_user->invite(curr_uid, make_invite(new_uid));
     }
 
-    Error Group::join(int32_t uid, const Phash& hash) {
+    Error Group::join(chapp_id_t uid, const Phash& hash) {
+        mark_active();
+
         if (!check_hash(uid, hash)) {
             return Error::IncorrectHash; // Wrong hash
         }
@@ -82,7 +89,9 @@ namespace Chapp {
         return Error::Ok;
     }
 
-    Error Group::leave(int32_t uid) {
+    Error Group::leave(chapp_id_t uid) {
+        mark_active();
+        
         auto it = users_by_id.find(uid);
         if (it == users_by_id.end()) {
             return Error::NotInGroup; // no such user in group
@@ -105,69 +114,69 @@ namespace Chapp {
         return Error::Ok;
     }
 
-    bool Group::has_user(int32_t uid) {
+    bool Group::has_user(chapp_id_t uid) {
         return users_by_id.find(uid) != users_by_id.end();
     }
 
-    PublicGroup::PublicGroup(int32_t gid, const string& gname, User* creator)
+    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, User* creator)
             : PublicGroup(gid, gname, { std::make_pair(creator->id, creator) })
     {
         creator->add_to_group(*this);
     }
 
-    PublicGroup::PublicGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users)
+    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users)
             : Group(gid, GroupType::Public, gname, users)
     {}
 
-    Phash PublicGroup::gen_hash(int32_t uid) const {
+    Phash PublicGroup::gen_hash(chapp_id_t uid) const {
         (void) uid;
         return {};
     }
 
-    bool PublicGroup::check_hash(int32_t uid, const Phash & /*hash*/) const {
+    bool PublicGroup::check_hash(chapp_id_t uid, const Phash & /*hash*/) const {
         (void) uid;
         return true;
     }
 
-    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, User* creator, Phash ghash)
+    ProtectedGroup::ProtectedGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash)
             : ProtectedGroup(gid, gname, { std::make_pair(creator->id, creator) }, ghash)
     {
         creator->add_to_group(*this);
     }
 
-    ProtectedGroup::ProtectedGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash)
+    ProtectedGroup::ProtectedGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash)
             : Group(gid, GroupType::Protected, gname, users)
             , hash(ghash)
     {}
 
-    Phash ProtectedGroup::gen_hash(int32_t uid) const {
+    Phash ProtectedGroup::gen_hash(chapp_id_t uid) const {
         (void) uid;
         return hash;
     }
 
-    bool ProtectedGroup::check_hash(int32_t uid, const Phash &hash) const {
+    bool ProtectedGroup::check_hash(chapp_id_t uid, const Phash &hash) const {
         (void) uid;
         return hash == this->hash;
     }
 
-    PrivateGroup::PrivateGroup(int32_t gid, const string& gname, User* creator)
+    PrivateGroup::PrivateGroup(chapp_id_t gid, const string& gname, User* creator)
     : PrivateGroup(gid, gname, { std::make_pair(creator->id, creator) }, Phash::RandFilled())
     {
         creator->add_to_group(*this);
     }
 
-    PrivateGroup::PrivateGroup(int32_t gid, const string& gname, const map<int32_t, User*>& users, Phash ghash)
+    PrivateGroup::PrivateGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash)
             : Group(gid, GroupType::Private, gname, users)
             , hash(ghash)
     {}
 
     // TODO(stek): Properly gen/check hashes for uid
-    Phash PrivateGroup::gen_hash(int32_t uid) const {
+    Phash PrivateGroup::gen_hash(chapp_id_t uid) const {
         (void) uid;
         return hash;
     }
 
-    bool PrivateGroup::check_hash(int32_t uid, const Phash &hash) const {
+    bool PrivateGroup::check_hash(chapp_id_t uid, const Phash &hash) const {
         (void) uid;
         return hash == this->hash;
     }

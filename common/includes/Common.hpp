@@ -23,6 +23,11 @@
 #ifndef CHAPP_COMMON_COMMON_H
 #define CHAPP_COMMON_COMMON_H
 
+namespace Chapp {
+    // User/Group id
+    using chapp_id_t = int;
+}
+
 #include "GroupTypes.hpp"
 #include "Phash.hpp"
 
@@ -38,7 +43,7 @@ namespace Chapp {
      * @brief Minimal group struct, used in API
      */
     struct MiniGroup {
-        int32_t id;     /**< Group id*/
+        chapp_id_t id;     /**< Group id*/
         string name;    /**< Group name*/
         GroupType type; /**< Group type*/
 
@@ -50,7 +55,7 @@ namespace Chapp {
      */
     struct GroupInvite {
         Phash hash{};       /**< hash for group:id */
-        int32_t for_uid;  /**< uid for which this invite is made */
+        chapp_id_t for_uid;  /**< uid for which this invite is made */
         MiniGroup group;  /**< group for which this invite is made */
 
         GroupInvite() = delete;
@@ -60,7 +65,7 @@ namespace Chapp {
      * @brief Minimal group struct, used in API
      */
     struct MiniUser {
-        int32_t id;      /**< User id*/
+        chapp_id_t id;      /**< User id*/
         string username; /**< Username*/
 
         MiniUser() = delete;
@@ -70,8 +75,8 @@ namespace Chapp {
      * @brief Abstract message, used in API
      */
     struct Message {
-        int32_t from_uid; /**< Message author */
-        int32_t to_gid;   /**< Group to which this message is sent*/
+        chapp_id_t from_uid; /**< Message author */
+        chapp_id_t to_gid;   /**< Group to which this message is sent*/
 
         Message() = delete;
     };

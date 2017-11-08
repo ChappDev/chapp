@@ -50,7 +50,7 @@ namespace Chapp {
         UserFactory() = default;
 
     public:
-        User* by_id(int32_t uid) const {
+        User* by_id(chapp_id_t uid) const {
             auto it = users_by_id.find(uid);
 
             if (it == users_by_id.end()) {
@@ -74,7 +74,7 @@ namespace Chapp {
         }
 
     private:
-        map<int32_t, User*> users_by_id;
+        map<chapp_id_t, User*> users_by_id;
 
     };
 

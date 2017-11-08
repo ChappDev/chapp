@@ -29,14 +29,14 @@
 
 namespace Chapp {
 
-    User::User(int32_t uid, const string& username)
+    User::User(chapp_id_t uid, const string& username)
         : User(uid, username, Phash::RandFilled()) {};
 
-    User::User(int32_t uid, string username, Phash hash)
+    User::User(chapp_id_t uid, string username, Phash hash)
             : id(uid)
             , username(std::move(username))
             , pass_hash(hash)
-            , last_activity(time(nullptr)) // Might this become a bottleneck?
+            , last_activity(Util::get_current_ts())
     {};
 
     User::~User() {
@@ -57,7 +57,7 @@ namespace Chapp {
         (void) msg;
     }
 
-    Error User::invite(int32_t inviter_id, const GroupInvite& invite) {
+    Error User::invite(chapp_id_t inviter_id, const GroupInvite& invite) {
         auto gid = invite.group.id;
 
         auto it = invites_by_gid.find(gid);
