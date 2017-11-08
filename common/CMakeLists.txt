@@ -12,6 +12,7 @@ set(SOURCE_FILES
   Session.cpp
   Group.cpp
   Common.cpp
+  Util.cpp
 
   includes/User.hpp
   includes/Session.hpp
@@ -20,6 +21,7 @@ set(SOURCE_FILES
   includes/UserFactory.hpp
   includes/Errors.hpp
   includes/Phash.hpp
+  includes/Util.hpp
   )
 
 if(${NO_DATABASE})

@@ -20,67 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_PHASH_H
-#define CHAPP_COMMON_PHASH_H
 
 #include "Util.hpp"
 
-#include <algorithm>
 #include <array>
-#include <random>
 #include <stdexcept>
 #include <string>
 
 
 namespace Chapp {
+    namespace Util {
+        using std::string;
 
-    using std::array;
-    using std::string;
-
-    class Phash {
-        static constexpr std::size_t PHASH_SIZE = 20;
-        using uarr_t = array<uint8_t, PHASH_SIZE>;
-
-    public:
-        Phash() = default;
-        Phash(const Phash&) = default;
-        Phash& operator=(const Phash&) = default;
-        Phash(Phash&&) = default;
-        Phash& operator=(Phash&&) = default;
-        ~Phash() = default;
-
-        bool operator==(const Phash &other) const {
-            return this->uarr == other.uarr;
-        }
-
-        static Phash RandFilled() {
-            Phash ret{};
-            ret.randFill();
-            return ret;
-        }
-
-        void randFill() {
-            Util::fill_with_random_values(uarr.begin(), uarr.end(), 0, UINT8_MAX);
-        }
-
-        explicit Phash(const string& str) {
-            if (str.size() != PHASH_SIZE) {
-                throw std::invalid_argument("Invalid str size");
+        string hex_to_string(const string& input) {
+            constexpr auto lut = "0123456789ABCDEF";
+            size_t len = input.length();
+            if ((len & 1) != 0u) {
+                throw std::invalid_argument("odd length");
             }
 
-            auto c_str = str.c_str();
-            std::copy(c_str, c_str + PHASH_SIZE, uarr.begin());
+            std::string output;
+            output.reserve(len / 2);
+            for (size_t i = 0; i < len; i += 2) {
+                char a = input[i];
+                const char* p = std::lower_bound(lut, lut + 16, a);
+                if (*p != a) {
+                    throw std::invalid_argument("not a hex digit");
+                }
+
+                char b = input[i + 1];
+                const char* q = std::lower_bound(lut, lut + 16, b);
+                if (*q != b) {
+                    throw std::invalid_argument("not a hex digit");
+                }
+
+                output.push_back(((p - lut) << 4) | (q - lut));
+            }
+
+            return output;
         }
 
-        explicit operator string() const {
-            return std::string(uarr.begin(), uarr.end());
-        }
-
-    private:
-        uarr_t uarr{};
-
-    };
-
+    }  // namespace Util
 } // namespace Chapp
-
-#endif

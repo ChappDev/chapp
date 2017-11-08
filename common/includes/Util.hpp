@@ -20,10 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_PHASH_H
-#define CHAPP_COMMON_PHASH_H
-
-#include "Util.hpp"
+#ifndef CHAPP_COMMON_UTILS_H
+#define CHAPP_COMMON_UTILS_H
 
 #include <algorithm>
 #include <array>
@@ -37,49 +35,47 @@ namespace Chapp {
     using std::array;
     using std::string;
 
-    class Phash {
-        static constexpr std::size_t PHASH_SIZE = 20;
-        using uarr_t = array<uint8_t, PHASH_SIZE>;
+    namespace Util {
+        // https://stackoverflow.com/a/41154116/5279817
+        // TODO(stek): Crypto safe stuff
+        template<class Iter, class int_t>
+        void fill_with_random_values(Iter start, Iter end, int_t min, int_t max)
+        {
+            static std::random_device rd;    // you only need to initialize it once
+            static std::mt19937 mte(rd());   // this is a relative big object to create
 
-    public:
-        Phash() = default;
-        Phash(const Phash&) = default;
-        Phash& operator=(const Phash&) = default;
-        Phash(Phash&&) = default;
-        Phash& operator=(Phash&&) = default;
-        ~Phash() = default;
+            std::uniform_int_distribution<int_t> dist(min, max);
 
-        bool operator==(const Phash &other) const {
-            return this->uarr == other.uarr;
+            std::generate(start, end, [&] () { return dist(mte); });
         }
 
-        static Phash RandFilled() {
-            Phash ret{};
-            ret.randFill();
-            return ret;
+
+        // https://stackoverflow.com/a/3382894/5279817
+        template<class T>
+        string string_to_hex(const T& in) {
+            return string_to_hex(static_cast<string>(in));
         }
 
-        void randFill() {
-            Util::fill_with_random_values(uarr.begin(), uarr.end(), 0, UINT8_MAX);
-        }
+        template<class T = string>
+        string string_to_hex(const string& input) {
+            constexpr auto lut = "0123456789ABCDEF";
+            size_t len = input.length();
 
-        explicit Phash(const string& str) {
-            if (str.size() != PHASH_SIZE) {
-                throw std::invalid_argument("Invalid str size");
+            string output;
+            output.reserve(2 * len);
+
+            for (size_t i = 0; i < len; ++i) {
+                const unsigned char c = input[i];
+                output.push_back(lut[c >> 4]);
+                output.push_back(lut[c & 15]);
             }
 
-            auto c_str = str.c_str();
-            std::copy(c_str, c_str + PHASH_SIZE, uarr.begin());
+            return output;
         }
 
-        explicit operator string() const {
-            return std::string(uarr.begin(), uarr.end());
-        }
-
-    private:
-        uarr_t uarr{};
-
-    };
+        string hex_to_string(const string& input);
+        
+    }  // namespace Util
 
 } // namespace Chapp
 
