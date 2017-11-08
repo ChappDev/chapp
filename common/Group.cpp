@@ -97,6 +97,11 @@ namespace Chapp {
 
         users_by_id.erase(it);
 
+        // TODO: This can (and will) blow up one day
+        if (users_by_id.empty()) {
+            GroupFactory::getInstance().remove_by_id(id);
+        }
+
         return Error::Ok;
     }
 

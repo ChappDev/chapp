@@ -30,6 +30,22 @@
 #include <map>
 #include <memory>
 
+/*!
+ * Example of GroupFactory
+ *
+ * @code
+ * class GroupFactory {
+ * public:
+ *   GroupFactory& getInstance();
+ *   Group* by_id(int32_t gid);
+ *   void remove_by_id(int32_t gid);
+ *
+ *   template<class... Args>
+ *   Group* construct(GroupType type, Args&&... args);
+ * }
+ * @endcode
+ */
+
 namespace Chapp {
 
     class GroupFactory {
@@ -50,8 +66,8 @@ namespace Chapp {
         GroupFactory() = default;
 
     public:
-        Group* by_id(int32_t uid) const {
-            auto it = groups_by_id.find(uid);
+        Group* by_id(int32_t gid) const {
+            auto it = groups_by_id.find(gid);
 
             if (it == groups_by_id.end()) {
                 return nullptr;
@@ -59,6 +75,10 @@ namespace Chapp {
 
             return it->second;
         };
+
+        void remove_by_id(int32_t gid) {
+            groups_by_id.erase(gid);
+        }
 
         template<class... Args>
         Group* construct(GroupType type, Args&&... args) {
