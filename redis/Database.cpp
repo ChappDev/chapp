@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Database.h"
+#include "Database.hpp"
 
 
 Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {

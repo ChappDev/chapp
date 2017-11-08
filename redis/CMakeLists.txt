@@ -11,7 +11,7 @@ find_path(CPPREDIS_INCLUDE_DIR cpp_redis/cpp_redis PATHS ${CMAKE_CURRENT_SOURCE_
 
 find_path(TACOPIE_INCLUDE_DIR tacopie/tacopie PATHS ${PROJECT_SOURCE_DIR}/tacopie/includes/)
 
-set(SOURCE_FILES Database.cpp includes/Database.h)
+set(SOURCE_FILES Database.cpp includes/Database.hpp)
 add_library(redis ${SOURCE_FILES})
 
 target_include_directories(redis PUBLIC
