@@ -25,10 +25,10 @@
 
 #include <algorithm>
 #include <array>
+#include <ctime>
 #include <random>
 #include <stdexcept>
 #include <string>
-#include <ctime>
 
 
 namespace Chapp {
