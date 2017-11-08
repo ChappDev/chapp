@@ -34,7 +34,7 @@ namespace Chapp {
 
     class UserFactory {
     public:
-        static UserFactory& getInstance()
+        static UserFactory& Instance()
         {
             static UserFactory instance; // Guaranteed to be destroyed.
             // Instantiated on first use.

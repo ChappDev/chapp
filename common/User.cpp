@@ -42,7 +42,7 @@ namespace Chapp {
     User::~User() {
         for (auto &group_id : joined_groups) {
             // TODO(stek): Avoid constructing groups just to delete user?
-            auto group = GroupFactory::getInstance().by_id(group_id);
+            auto group = GroupFactory::Instance().by_id(group_id);
             if (group == nullptr) {
                 continue; // WTF?!
             }

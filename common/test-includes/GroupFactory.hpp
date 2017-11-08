@@ -36,7 +36,7 @@
  * @code
  * class GroupFactory {
  * public:
- *   GroupFactory& getInstance();
+ *   GroupFactory& Instance();
  *   Group* by_id(int32_t gid);
  *   void remove_by_id(int32_t gid);
  *
@@ -50,7 +50,7 @@ namespace Chapp {
 
     class GroupFactory {
     public:
-        static GroupFactory& getInstance()
+        static GroupFactory& Instance()
         {
             static GroupFactory instance; // Guaranteed to be destroyed.
             // Instantiated on first use.

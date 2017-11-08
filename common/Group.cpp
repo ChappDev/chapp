@@ -53,7 +53,7 @@ namespace Chapp {
             return Error::AlreadyInGroup; // new_uid already in group
         }
 
-        auto new_user = UserFactory::getInstance().by_id(new_uid);
+        auto new_user = UserFactory::Instance().by_id(new_uid);
 
         if (new_user == nullptr) {
             return Error::InvalidUserId; // invalid user
@@ -67,7 +67,7 @@ namespace Chapp {
             return Error::IncorrectHash; // Wrong hash
         }
 
-        auto user = UserFactory::getInstance().by_id(uid);
+        auto user = UserFactory::Instance().by_id(uid);
         if (user == nullptr) {
             return Error::InvalidUserId; // invalid user
         }
@@ -97,9 +97,9 @@ namespace Chapp {
 
         users_by_id.erase(it);
 
-        // TODO: This can (and will) blow up one day
+        // TODO(stek): This can (and will) blow up one day
         if (users_by_id.empty()) {
-            GroupFactory::getInstance().remove_by_id(id);
+            GroupFactory::Instance().remove_by_id(id);
         }
 
         return Error::Ok;
