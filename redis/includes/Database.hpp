@@ -52,7 +52,7 @@ public:
     void addUserToGroup(int uid, int gid);
     void deleteUserFromGroup(int uid, int gid);
     std::vector<int> getUsersInGroup(int gid);
-
+    //TODO GET GROUP HASH
 private:
 
     std::string gidConcat(int gid);

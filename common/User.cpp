@@ -80,7 +80,7 @@ namespace Chapp {
             return Error::AlreadyInGroup; // Not inserted
         }
 
-        // Database.addUserToGroup(id, group.id);
+        // TODO Database.addUserToGroup(id, group.id);
         // TODO(stek): notify socket
         (void)0; // To disable CLion simplify
         return Error::Ok;
@@ -92,7 +92,7 @@ namespace Chapp {
             return Error::NotInGroup; // Not erased
         }
 
-        // Database.removeUserFromGroup(id, group.id);
+        // TODO Database.removeUserFromGroup(id, group.id);
 
         (void)0; // To disable CLion simplify
         return Error::Ok;

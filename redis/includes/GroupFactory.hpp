@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Viktor Oreshkin <imselfish@stek29.rocks>
+// Copyright (c) 2017 George Gabolaev <gabolaev98@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,16 @@
 #include "Common.hpp"
 #include "Group.hpp"
 #include "User.hpp"
+#include "Database.hpp"
 
 #include <map>
 #include <memory>
+#include <iostream>
+#include <thread>
+#include <set>
+#include <iomanip>
+#include <unistd.h>
+#include <mutex>
 
 /*!
  * Example of GroupFactory
@@ -63,42 +70,18 @@ namespace Chapp {
         GroupFactory& operator=(GroupFactory&&) = delete;
 
     private:
+        Database *obj;
         GroupFactory() = default;
 
     public:
         Group* by_id(int32_t gid) const {
-            auto it = groups_by_id.find(gid);
 
-            if (it == groups_by_id.end()) {
-                return nullptr;
-            }
-
-            return it->second;
         };
 
-        void remove_by_id(int32_t gid) {
-            groups_by_id.erase(gid);
-        }
+        void remove(Group* group);
 
         template<class... Args>
-        Group* construct(GroupType type, Args&&... args) {
-            Group *group = nullptr;
-            switch (type) {
-                case GroupType::Public:
-                    group = new PublicGroup(args...);
-                    break;
-                case GroupType::Private:
-                    group = new PrivateGroup(args...);
-                    break;
-                case GroupType::Protected:
-                    group = new ProtectedGroup(args...);
-                    break;
-            }
-
-            groups_by_id.insert(std::make_pair(group->id, group));
-
-            return group;
-        }
+        Group* construct(GroupType type, Args&&... args);
 
         ~GroupFactory() {
             for (auto &it : groups_by_id) {
@@ -107,8 +90,8 @@ namespace Chapp {
         }
 
     private:
-        map<int32_t, Group*> groups_by_id;
-
+        void moderateCachedGroups();
+        map<int32_t, std::pair<Group*, time_t>> groups_by_id;
     };
 
 }  // namespace Chapp
