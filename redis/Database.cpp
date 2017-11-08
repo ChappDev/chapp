@@ -35,7 +35,7 @@ Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {
 }
 
 std::string Database::gidConcat(int gid) {
-    return "UIG:"+std::to_string(gid);
+    return "group-users:"+std::to_string(gid);
 }
 
 std::string Database::incrementNowId(typeOfId type) {
@@ -49,27 +49,33 @@ std::string Database::incrementNowId(typeOfId type) {
 int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash) {
 
     auto newGroupId = incrementNowId(GROUP);
-    client.hset(std::to_string(CastFromEnum(type)), newGroupId, name);
-    client.hset("hashes", newGroupId, hash);
+    client.hset("gid-name", newGroupId, name);
+    client.hset("gid-hash", newGroupId, hash);
+    client.hset("gid-type", newGroupId, hash);
     client.sync_commit();
     return stoi(newGroupId);
 }
 
-std::map<int, std::string> Database::getListOfGroups(Chapp::GroupType type) {
 
-    std::future<cpp_redis::reply> queryRes = client.hgetall(std::to_string(CastFromEnum(type)));
+std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroups() {
+
+    std::future<cpp_redis::reply> queryResNames = client.hgetall("gid-name");
     client.sync_commit();
 
-    auto parsedResponse = queryRes.get().as_array();
-    std::map<int, std::string> result = {};
+    auto parsedResponseNames = queryResNames.get().as_array();
 
-    for (auto iter = parsedResponse.begin(); iter != parsedResponse.end(); iter++) {
+    std::map<int, std::pair<std::string, Chapp::GroupType>> result = {};
+
+    for (auto iter = parsedResponseNames.begin(); iter != parsedResponseNames.end(); iter++) {
         auto key = stoi(iter->as_string());
+        auto typeRequest = client.hget("gid-type", iter->as_string());
+        client.sync_commit();
+        Chapp::GroupType type = Chapp::CastToEnum<Chapp::GroupType>(typeRequest.get().as_integer());
 
-        if (++iter == parsedResponse.end()) break;
+        if (++iter == parsedResponseNames.end()) break;
 
         auto value = iter->as_string();
-        result.insert(std::pair<int, std::string>(key, value));
+        result.insert(std::pair<int, std::pair<std::string, Chapp::GroupType>>(key, std::pair<std::string, Chapp::GroupType>(value, type)));
     }
     return result;
 
@@ -84,7 +90,7 @@ void Database::deleteGroup(Chapp::GroupType type, int gid) {
 
 int Database::addUser(std::string username) {
     auto newUserId = incrementNowId(USER);
-    client.hset("user", newUserId, username);
+    client.hset("uid-username", newUserId, username);
     client.sync_commit();
     return stoi(newUserId);
 }
@@ -98,14 +104,14 @@ void Database::deleteUser(int uid){
 
 void Database::addUserToGroup(int uid, int gid) {
 
-    client.sadd("UIG:" + std::to_string(gid), {std::to_string(uid)});
+    client.sadd(gidConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
 
 void Database::deleteUserFromGroup(int uid, int gid) {
 
-    client.srem("UIG:" + std::to_string(gid), {std::to_string(uid)});
+    client.srem(gidConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
