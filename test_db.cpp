@@ -2,7 +2,7 @@
 // Created by George Gabolaev on 02/11/2017.
 //
 
-#include "Database.h"
+#include "Database.hpp"
 
 int main(){
 
@@ -12,15 +12,17 @@ int main(){
     auto userId2 = obj.addUser("durov");
     auto userId3 = obj.addUser("buryak");
     auto userId4 = obj.addUser("vitalya");
-    auto groupId1 = obj.addGroup(PUBLIC, "raggamote");
-    auto groupId2 = obj.addGroup(PRIVATE, "telegram");
-    auto groupId3 = obj.addGroup(PROTECTED, "buros_developement");
-    auto groups = obj.getListOfGroups(PROTECTED);
+    auto groupId1 = obj.addGroup(Chapp::GroupType::Public, "raggamote", "0");
+    auto groupId11 = obj.addGroup(Chapp::GroupType::Public, "alksmda", "0");
+    auto groupId2 = obj.addGroup(Chapp::GroupType::Private, "1l2km3", "alksmd");
+    auto groupId22 = obj.addGroup(Chapp::GroupType::Private, "telegram", "1joi23");
+    auto groupId3 = obj.addGroup(Chapp::GroupType::Protected, "buros_developement", "op123k");
+    auto groupId33 = obj.addGroup(Chapp::GroupType::Protected, "l21lkm3123", "ap9skd");
+    auto groups = obj.getListOfGroups(Chapp::GroupType::Protected);
     for_each(groups.begin(), groups.end(), [](auto _group){
         std::cout << _group.first << " =  " << _group.second << std::endl;
-
     });
-    obj.deleteGroup(PRIVATE, groupId3);
+    obj.deleteGroup(Chapp::GroupType::Private, groupId3);
     obj.addUserToGroup(userId1, groupId1);
     obj.addUserToGroup(userId2, groupId2);
     obj.addUserToGroup(userId3, groupId3);
