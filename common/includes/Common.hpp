@@ -23,6 +23,10 @@
 #ifndef CHAPP_COMMON_COMMON_H
 #define CHAPP_COMMON_COMMON_H
 
+#ifdef NO_DATABASE
+#include "NoDatabaseGlue.hpp"
+#endif
+
 #include <array>
 #include <random>
 #include <string>
@@ -37,12 +41,6 @@ namespace Chapp {
     // TODO(stek): Turn into a class
     using phash = array<uint8_t, 20>;
     phash gen_rand_phash();
-
-    enum class GroupType : char {
-        Public = 0, // Listed, can be joined freely
-        Private,    // Listed, but Password protected
-        Protected,  // Unlisted, can be only invited to
-    };
 
     /*!
      * @brief Minimal group struct, used in API

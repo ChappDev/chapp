@@ -22,8 +22,9 @@
 
 #include "Group.hpp"
 
-#include "Placeholders.hpp"
+#include "GroupFactory.hpp"
 #include "User.hpp"
+#include "UserFactory.hpp"
 #include <utility>
 
 namespace Chapp {
