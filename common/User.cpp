@@ -23,7 +23,7 @@
 #include "User.hpp"
 
 #include "Group.hpp"
-#include "Placeholders.hpp"
+#include "Factories.hpp"
 #include <utility>
 
 namespace Chapp {

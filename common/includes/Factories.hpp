@@ -20,13 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*!
- * @brief Placeholders needed for test build
- *
- * Sample factories
- */
-
-#if !defined(CHAPP_COMMON_PLACEHOLDERS_H) && defined(CHAPP_COMMON_USE_PLACEHOLDERS)
+#ifndef CHAPP_COMMON_PLACEHOLDERS_H
 #define CHAPP_COMMON_PLACEHOLDERS_H
 
 #include "Common.hpp"

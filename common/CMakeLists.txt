@@ -15,7 +15,7 @@ set(SOURCE_FILES
   includes/Session.hpp
   includes/Group.hpp
   includes/Common.hpp
-  includes/Placeholders.hpp
+  includes/Factories.hpp
   includes/Errors.hpp
   )
 
@@ -23,9 +23,5 @@ add_library(chapp_common ${SOURCE_FILES})
 
 target_include_directories(chapp_common PUBLIC
         ${COMMON_INCLUDES}
-        )
-
-target_compile_definitions(chapp_common PRIVATE
-        CHAPP_COMMON_USE_PLACEHOLDERS
         )
 
