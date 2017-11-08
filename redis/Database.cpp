@@ -20,8 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Database.h"
-
+#include "Database.hpp"
 
 Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {
 
@@ -47,17 +46,18 @@ std::string Database::incrementNowId(typeOfId type) {
     return std::to_string(queryRes.get().as_integer());
 }
 
-int Database::addGroup(groupType type, std::string name) {
+int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash) {
 
     auto newGroupId = incrementNowId(GROUP);
-    client.hset(std::to_string(type), newGroupId, name);
+    client.hset(std::to_string(CastFromEnum(type)), newGroupId, name);
+    client.hset("hashes", newGroupId, hash);
     client.sync_commit();
     return stoi(newGroupId);
 }
 
-std::map<int, std::string> Database::getListOfGroups(groupType type) {
+std::map<int, std::string> Database::getListOfGroups(Chapp::GroupType type) {
 
-    std::future<cpp_redis::reply> queryRes = client.hgetall(std::to_string(type));
+    std::future<cpp_redis::reply> queryRes = client.hgetall(std::to_string(CastFromEnum(type)));
     client.sync_commit();
 
     auto parsedResponse = queryRes.get().as_array();
@@ -75,9 +75,9 @@ std::map<int, std::string> Database::getListOfGroups(groupType type) {
 
 }
 
-void Database::deleteGroup(groupType type, int gid) {
+void Database::deleteGroup(Chapp::GroupType type, int gid) {
 
-    client.hdel(std::to_string(type), {std::to_string(gid)});
+    client.hdel(std::to_string(CastFromEnum(type)), {std::to_string(gid)});
     client.sync_commit();
 
 }
@@ -122,4 +122,5 @@ std::vector<int> Database::getUsersInGroup(int gid) {
     return members;
 
 }
+
 
