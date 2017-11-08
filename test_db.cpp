@@ -12,18 +12,16 @@ int main(){
     auto userId2 = obj.addUser("durov");
     auto userId3 = obj.addUser("buryak");
     auto userId4 = obj.addUser("vitalya");
-    auto groupId1 = obj.addGroup(Chapp::GroupType::Public, "raggamote", "0");
-    auto groupId11 = obj.addGroup(Chapp::GroupType::Public, "alksmda", "0");
+
+    auto groupId1 = obj.addGroup(Chapp::GroupType::Public, "raggamote", "asldkn");
+    auto groupId11 = obj.addGroup(Chapp::GroupType::Public, "alksmda", "wjaknd");
     auto groupId2 = obj.addGroup(Chapp::GroupType::Private, "1l2km3", "alksmd");
     auto groupId22 = obj.addGroup(Chapp::GroupType::Private, "telegram", "1joi23");
     auto groupId3 = obj.addGroup(Chapp::GroupType::Protected, "buros_developement", "op123k");
     auto groupId33 = obj.addGroup(Chapp::GroupType::Protected, "l21lkm3123", "ap9skd");
-    auto groups = obj.getListOfGroups();
+    std::map<int, std::pair<std::string, Chapp::GroupType>> groups = obj.getListOfGroups();
     for_each(groups.begin(), groups.end(), [](auto _group){
-        std::cout << _group.first
-            << " = " << _group.second.first
-            << " type:" << Chapp::CastFromEnum(_group.second.second)
-            << std::endl;
+        std::cout << _group.first << " = " << _group.second.first << " = "  << std::endl;
     });
     obj.deleteGroup(Chapp::GroupType::Private, groupId3);
     obj.addUserToGroup(userId1, groupId1);
