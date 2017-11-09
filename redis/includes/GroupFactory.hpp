@@ -74,11 +74,9 @@ namespace Chapp {
         GroupFactory();
 
     public:
-        Group* by_id(int32_t gid) const {
-            return nullptr;
-        };
+        Group* by_id(int32_t gid);
 
-        void remove(Group* group);
+        void remove(uint32_t gid, bool fromDB);
 
         template<class... Args>
         Group* construct(GroupType type, Args&&... args);
