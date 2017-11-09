@@ -27,15 +27,15 @@ int main(){
     obj.deleteGroup(groupId3);
 //    obj.addUserToGroup(userId1, groupId1);
 //    obj.addUserToGroup(userId2, groupId2);
-//    obj.addUserToGroup(userId3, groupId3);
-//    obj.addUserToGroup(userId4, groupId3);
+    obj.addUserToGroup(userId3, groupId3);
+    obj.addUserToGroup(userId4, groupId3);
+    auto members = obj.getUsersInGroup(groupId3);
 //    obj.deleteUserFromGroup(userId4, groupId3);
 //    obj.deleteUser(userId4);
 //    obj.addUserToGroup(userId1, groupId3);
-    auto members = obj.getUsersInGroup(groupId3);
 
-    for_each(members.begin(), members.end(), [](auto member){
-        std::cout << member << " " << std::endl;
-
-    });
+//    for_each(members.begin(), members.end(), [](auto member){
+//        std::cout << member << " " << std::endl;
+//
+//    });
 }

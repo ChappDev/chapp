@@ -53,7 +53,10 @@ namespace Chapp {
         }
         auto result = obj->getGroupInfoById(gid);
         auto users = obj->getUsersInGroup(gid);
-
+//        if (std::get<2>(result) == "0") //TODO ignore this warning, fix construct calling FUCK YOUR GODDAMN ARGS STEK29
+//            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users);
+//        else
+//            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users, std::get<2>(result));
     }
 
     void GroupFactory::remove(uint32_t gid, bool fromDB) {

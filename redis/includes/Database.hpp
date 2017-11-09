@@ -50,10 +50,11 @@ public:
 
     int addUser(std::string username);
     void deleteUser(uint32_t uid);
+    std::string getUserNameById(uint32_t uid);
 
     void addUserToGroup(uint32_t uid, uint32_t gid);
     void deleteUserFromGroup(uint32_t uid, uint32_t gid);
-    std::vector<int> getUsersInGroup(uint32_t gid);
+    std::map<uint32_t, std::string> getUsersInGroup(uint32_t gid);
     //TODO GET GROUP HASH
 private:
 
