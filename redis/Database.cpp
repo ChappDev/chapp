@@ -120,6 +120,12 @@ int Database::addUser(std::string username) {
     return stoi(newUserId);
 }
 
+std::string Database::getUserNameById(uint32_t uid){
+    auto nowUserName = client.hget(UID_UNAME, std::to_string(uid));
+    client.sync_commit();
+    return nowUserName.get().as_string();
+}
+
 void Database::deleteUser(uint32_t uid){
 
     client.hdel(USERS, { std::to_string(uid) });
@@ -141,18 +147,16 @@ void Database::deleteUserFromGroup(uint32_t uid, uint32_t gid) {
 
 }
 
-std::vector<int> Database::getUsersInGroup(uint32_t gid) {
+std::map<uint32_t, std::string> Database::getUsersInGroup(uint32_t gid) {
 
     auto queryRes = client.smembers(userInGroupConcat(gid));
     client.sync_commit();
     auto parsedResponse = queryRes.get().as_array();
-    std::vector<int> members;
-    for_each(parsedResponse.begin(), parsedResponse.end(), [&members](auto _member){
-       members.push_back(stoi(_member.as_string()));
-    });
+    std::map<uint32_t, std::string> members;
+    for(auto iter = parsedResponse.begin(); iter != parsedResponse.end(); ++iter){
+        auto uid = stoi(iter->as_string());
+        members.insert(std::pair<uint32_t, std::string>(uid, getUserNameById(uid)));
+    }
     return members;
 
 }
-
-
-
