@@ -21,6 +21,15 @@
 // SOFTWARE.
 
 #include "Database.hpp"
+#define GID_USER "group-users:"
+#define UnowID "userNowId"
+#define GnowID "groupNowId"
+#define GID_NAME "gid-name"
+#define GID_HASH "gid-hash"
+#define GID_TYPE "gid-type"
+#define UID_UNAME "uid-username"
+#define USERS "user"
+#define DISCONNECT "user disconnected from host"
 
 Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {
 
@@ -29,18 +38,18 @@ Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {
     client.connect(ipAddr, port,
                    [](const std::string &host, std::size_t port, cpp_redis::client::connect_state status) {
                        if (status == cpp_redis::client::connect_state::dropped) {
-                           std::cout << "client disconnected from " << host << ":" << port << std::endl;
+                           std::cout << DISCONNECT << host << ":" << port << std::endl;
                        }
                    });
 }
 
-std::string Database::gidConcat(int gid) {
-    return "group-users:"+std::to_string(gid);
+std::string Database::userInGroupConcat(uint32_t gid) {
+    return GID_USER + std::to_string(gid);
 }
 
 std::string Database::incrementNowId(typeOfId type) {
 
-    std::string incrementValue = type ? "userNowId" : "groupNowId";
+    std::string incrementValue = type ? UnowID : GnowID;
     std::future<cpp_redis::reply> queryRes = client.incr(incrementValue);
     client.sync_commit();
     return std::to_string(queryRes.get().as_integer());
@@ -49,13 +58,25 @@ std::string Database::incrementNowId(typeOfId type) {
 int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash) {
 
     auto newGroupId = incrementNowId(GROUP);
-    client.hset("gid-name", newGroupId, name);
-    client.hset("gid-hash", newGroupId, hash);
-    client.hset("gid-type", newGroupId, std::to_string(CastFromEnum(type)));
+    client.hset(GID_NAME, newGroupId, name);
+    client.hset(GID_HASH, newGroupId, hash);
+    client.hset(GID_TYPE, newGroupId, std::to_string(CastFromEnum(type)));
     client.sync_commit();
     return stoi(newGroupId);
 }
 
+std::tuple<Chapp::GroupType, std::string, std::string> Database::getGroupInfoById(uint32_t gid) {
+    std::string idAsString = std::to_string(gid);
+    auto nameRequest = client.hget(GID_NAME, idAsString);
+    auto hashRequest = client.hget(GID_HASH, idAsString);
+    auto typeRequest = client.hget(GID_TYPE, idAsString);
+    client.sync_commit();
+    return std::tuple<Chapp::GroupType, std::string, std::string>(
+            Chapp::CastToEnum<Chapp::GroupType>(stoi(typeRequest.get().as_string())),
+            nameRequest.get().as_string(),
+            hashRequest.get().as_string()
+    );
+}
 
 std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroups() {
 
@@ -68,7 +89,7 @@ std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroup
 
     for (auto iter = parsedResponseNames.begin(); iter != parsedResponseNames.end(); iter++) {
         auto key = stoi(iter->as_string());
-        auto typeRequest = client.hget("gid-type", iter->as_string());
+        auto typeRequest = client.hget(GID_TYPE, iter->as_string());
         client.sync_commit();
         Chapp::GroupType type = Chapp::CastToEnum<Chapp::GroupType>(stoi(typeRequest.get().as_string()));
 
@@ -81,44 +102,48 @@ std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroup
 
 }
 
-void Database::deleteGroup(Chapp::GroupType type, int gid) {
+void Database::deleteGroup(uint32_t gid) {
 
-    client.hdel(std::to_string(CastFromEnum(type)), {std::to_string(gid)});
+    std::vector<std::string> query = {std::to_string(gid)};
+    client.hdel(GID_NAME, query);
+    client.hdel(GID_HASH, query);
+    client.hdel(GID_TYPE, query);
+    client.del({userInGroupConcat(gid)});
     client.sync_commit();
 
 }
 
 int Database::addUser(std::string username) {
     auto newUserId = incrementNowId(USER);
-    client.hset("uid-username", newUserId, username);
+    client.hset(UID_UNAME, newUserId, username);
     client.sync_commit();
     return stoi(newUserId);
 }
 
-void Database::deleteUser(int uid){
+void Database::deleteUser(uint32_t uid){
 
-    client.hdel("user", { std::to_string(uid) });
+    client.hdel(USERS, { std::to_string(uid) });
     client.sync_commit();
 
 }
 
-void Database::addUserToGroup(int uid, int gid) {
+void Database::addUserToGroup(uint32_t uid, uint32_t gid) {
 
-    client.sadd(gidConcat(gid), {std::to_string(uid)});
+    client.sadd(userInGroupConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
 
-void Database::deleteUserFromGroup(int uid, int gid) {
+void Database::deleteUserFromGroup(uint32_t uid, uint32_t gid) {
 
-    client.srem(gidConcat(gid), {std::to_string(uid)});
+    client.srem(userInGroupConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
 
-std::vector<int> Database::getUsersInGroup(int gid) {
+std::vector<int> Database::getUsersInGroup(uint32_t gid) {
 
-    auto queryRes = client.smembers(gidConcat(gid));
+    auto queryRes = client.smembers(userInGroupConcat(gid));
     client.sync_commit();
     auto parsedResponse = queryRes.get().as_array();
     std::vector<int> members;
@@ -128,5 +153,6 @@ std::vector<int> Database::getUsersInGroup(int gid) {
     return members;
 
 }
+
 
 

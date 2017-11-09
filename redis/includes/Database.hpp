@@ -45,18 +45,19 @@ public:
 
     int addGroup(Chapp::GroupType type, std::string name, std::string hash);
     std::map<int, std::pair<std::string, Chapp::GroupType>> getListOfGroups();
-    void deleteGroup(Chapp::GroupType type, int gid);
+    void deleteGroup(uint32_t gid);
+    std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(uint32_t uid);
 
     int addUser(std::string username);
-    void deleteUser(int uid);
+    void deleteUser(uint32_t uid);
 
-    void addUserToGroup(int uid, int gid);
-    void deleteUserFromGroup(int uid, int gid);
-    std::vector<int> getUsersInGroup(int gid);
+    void addUserToGroup(uint32_t uid, uint32_t gid);
+    void deleteUserFromGroup(uint32_t uid, uint32_t gid);
+    std::vector<int> getUsersInGroup(uint32_t gid);
     //TODO GET GROUP HASH
 private:
 
-    std::string gidConcat(int gid);
+    std::string userInGroupConcat(uint32_t gid);
     std::string ipAddr;
     int port;
     cpp_redis::client client;

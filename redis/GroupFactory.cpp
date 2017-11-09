@@ -40,17 +40,29 @@ namespace Chapp {
                     forDelete.insert(iter->first);
             }
             for_each(forDelete.begin(), forDelete.end(), [=](int _id){
-                auto it = this->groups_by_id.find(_id);
-                delete it->second.first;
-                groups_by_id.erase(it);
+                remove(_id, false);
             });
             locker.unlock();
             sleep(SLEEP_TIME);
         }
     }
 
-    void GroupFactory::remove(Group* group) {
-        obj->deleteGroup(group->type, group->id);
+    Group* GroupFactory::by_id(int32_t gid) {
+        if (groups_by_id.count(gid)){
+            return groups_by_id[gid].first;
+        }
+        auto result = obj->getGroupInfoById(gid);
+        auto users = obj->getUsersInGroup(gid);
+
+    }
+
+    void GroupFactory::remove(uint32_t gid, bool fromDB) {
+        if (fromDB){
+            obj->deleteGroup(gid);
+        }
+        auto it = this->groups_by_id.find(gid);
+        delete it->second.first;
+        groups_by_id.erase(it);
     }
 
     GroupFactory::GroupFactory(){
