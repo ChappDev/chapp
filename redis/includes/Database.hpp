@@ -37,10 +37,20 @@ class Database {
 
 public:
 
-    //TODO: 1) add auth by password; 2) protected groups passwords; 3) protected groups invite-lists;
+    static Database& Instance(){
 
-    Database(std::string ipAddr, int port);
+        static Database client;
+        return client;
+    }
 
+private:
+
+    Database();
+    ~Database(){};
+    Database(Database const&) = delete;
+    Database& operator=(Database const&) = delete;
+
+public:
     std::string incrementNowId(typeOfId type);
 
     int addGroup(Chapp::GroupType type, std::string name, std::string hash);
@@ -55,7 +65,7 @@ public:
     void addUserToGroup(uint32_t uid, uint32_t gid);
     void deleteUserFromGroup(uint32_t uid, uint32_t gid);
     std::map<uint32_t, std::string> getUsersInGroup(uint32_t gid);
-    //TODO GET GROUP HASH
+
 private:
 
     std::string userInGroupConcat(uint32_t gid);
