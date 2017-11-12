@@ -6,7 +6,7 @@
 
 int main(){
 
-    Database obj("localhost", 6379);
+    Database &obj = Database::Instance();
 
     auto userId1 = obj.addUser("gabolaev");
     auto userId2 = obj.addUser("durov");

@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include "Database.hpp"
+
 #define GID_USER "group-users:"
 #define UnowID "userNowId"
 #define GnowID "groupNowId"
@@ -31,11 +32,11 @@
 #define USERS "user"
 #define DISCONNECT "user disconnected from host"
 
-Database::Database(std::string ipAddr, int port) : ipAddr(ipAddr), port(port) {
+Database::Database() {
 
     cpp_redis::active_logger = std::unique_ptr<cpp_redis::logger>(new cpp_redis::logger);
 
-    client.connect(ipAddr, port,
+    client.connect("localhost", 6379,
                    [](const std::string &host, std::size_t port, cpp_redis::client::connect_state status) {
                        if (status == cpp_redis::client::connect_state::dropped) {
                            std::cout << DISCONNECT << host << ":" << port << std::endl;
@@ -96,7 +97,9 @@ std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroup
         if (++iter == parsedResponseNames.end()) break;
 
         auto value = iter->as_string();
-        result.insert(std::pair<int, std::pair<std::string, Chapp::GroupType>>(key, std::pair<std::string, Chapp::GroupType>(value, type)));
+        result.insert(std::pair<int, std::pair<std::string, Chapp::GroupType>>(key,
+                                                                               std::pair<std::string, Chapp::GroupType>(
+                                                                                       value, type)));
     }
     return result;
 
@@ -120,15 +123,15 @@ int Database::addUser(std::string username) {
     return stoi(newUserId);
 }
 
-std::string Database::getUserNameById(uint32_t uid){
+std::string Database::getUserNameById(uint32_t uid) {
     auto nowUserName = client.hget(UID_UNAME, std::to_string(uid));
     client.sync_commit();
     return nowUserName.get().as_string();
 }
 
-void Database::deleteUser(uint32_t uid){
+void Database::deleteUser(uint32_t uid) {
 
-    client.hdel(USERS, { std::to_string(uid) });
+    client.hdel(USERS, {std::to_string(uid)});
     client.sync_commit();
 
 }
@@ -153,7 +156,7 @@ std::map<uint32_t, std::string> Database::getUsersInGroup(uint32_t gid) {
     client.sync_commit();
     auto parsedResponse = queryRes.get().as_array();
     std::map<uint32_t, std::string> members;
-    for(auto iter = parsedResponse.begin(); iter != parsedResponse.end(); ++iter){
+    for (auto iter = parsedResponse.begin(); iter != parsedResponse.end(); ++iter) {
         auto uid = stoi(iter->as_string());
         members.insert(std::pair<uint32_t, std::string>(uid, getUserNameById(uid)));
     }

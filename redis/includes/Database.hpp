@@ -28,39 +28,131 @@
 #include <GroupTypes.hpp>
 #include <tuple>
 
-enum typeOfId{
-    GROUP,
-    USER
-};
 
+/**
+ * Singleton class which provides to
+ * call Redis key-value storage main methods
+ * needed on groups factory.
+ */
 class Database {
 
 public:
 
-    //TODO: 1) add auth by password; 2) protected groups passwords; 3) protected groups invite-lists;
+    /**
+     * Enum for incrementNowId(typeOfId type) method argument
+     * There is 2 now ID in database.
+     */
+    enum typeOfId {
+        GROUP,
+        USER
+    };
 
-    Database(std::string ipAddr, int port);
+    static Database &Instance() {
+        static Database client; //! Guaranteed to be destroyed.
+        return client; //! Instantiated on first use.
+    }
 
-    std::string incrementNowId(typeOfId type);
-
-    int addGroup(Chapp::GroupType type, std::string name, std::string hash);
-    std::map<int, std::pair<std::string, Chapp::GroupType>> getListOfGroups();
-    void deleteGroup(uint32_t gid);
-    std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(uint32_t uid);
-
-    int addUser(std::string username);
-    void deleteUser(uint32_t uid);
-    std::string getUserNameById(uint32_t uid);
-
-    void addUserToGroup(uint32_t uid, uint32_t gid);
-    void deleteUserFromGroup(uint32_t uid, uint32_t gid);
-    std::map<uint32_t, std::string> getUsersInGroup(uint32_t gid);
-    //TODO GET GROUP HASH
 private:
 
+    // Disable all the constructors and destructors we don't want to be called.
+    Database();
+    ~Database() {};
+
+    Database(Database const &) = delete;
+    Database &operator=(Database const &) = delete;
+
+public:
+
+    /**
+     * We call this method each time we add a new user or group.
+     * @param type What type of ID need to be incremented
+     * @return new ID (The String is because it will be immediately used as a query argument to the database.)
+     */
+    std::string incrementNowId(typeOfId type);
+
+    /**
+     *
+     * @param type type of group (Public, Protected, Private)
+     * @param name name of group
+     * @param hash valid hash of this new group ("0" if groups is Public, password hash if group is protected)
+     * @return new group ID
+     */
+    int addGroup(Chapp::GroupType type, std::string name, std::string hash);
+
+    /**
+     *
+     * @return map of group_id and pair of group_name group_type
+     */
+    std::map<int, std::pair<std::string, Chapp::GroupType>> getListOfGroups();
+
+    /**
+     * Removes full information about the group and its users list.
+     * @param gid ID of group which has to be deleted
+     */
+    void deleteGroup(uint32_t gid);
+
+    /**
+     * Gives full information about group, besides the list of users.
+     * @param gid ID of group
+     * @return tuple of group_type, group_name, group_hash
+     */
+    std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(uint32_t gid);
+
+    /**
+     * @param username
+     * @return new user ID
+     */
+    int addUser(std::string username);
+
+    /**
+     * Removes information about the user, and also TODO deletes it from all groups.
+     * @param uid ID of the user whose has to be deleted
+     */
+    void deleteUser(uint32_t uid);
+
+    /**
+     * @param uid ID of the user whose nickname we need
+     * @return nickname
+     */
+    std::string getUserNameById(uint32_t uid);
+
+    /**
+     * Adds the user's ID to the list of members of this group.
+     * @param uid ID of user
+     * @param gid ID of group
+     * @return
+     */
+    void addUserToGroup(uint32_t uid, uint32_t gid);
+
+    /**
+     * Removes passed user ID from passed group ID members list.
+     * @param uid ID of user
+     * @param gid ID of group
+     */
+    void deleteUserFromGroup(uint32_t uid, uint32_t gid);
+
+    /**
+     * Gives full list of group members IDs
+     * @param gid ID of group, the information about which we need
+     * @return
+     */
+    std::map<uint32_t, std::string> getUsersInGroup(uint32_t gid);
+
+private:
+
+    /**
+     * Since the list of group members in the database
+     * is stored in the form of "group-users:%GROUP_ID%"
+     * we need to concatenate that string and group_id we want to request
+     * in some methods such as deleteGroup(), addUserToGroup(), deleteUserFromGroup(), getUsersInGroup()
+     * @param gid
+     * @return
+     */
     std::string userInGroupConcat(uint32_t gid);
-    std::string ipAddr;
-    int port;
+
+    /**
+     * Client from whom we do all requests.
+     */
     cpp_redis::client client;
 
 };

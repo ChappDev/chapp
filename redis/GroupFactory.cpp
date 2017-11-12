@@ -36,7 +36,7 @@ namespace Chapp {
             std::set<int> forDelete;
             for (auto iter = groups_by_id.begin(); iter != groups_by_id.end(); iter++) {
                 std::cout << time(nullptr) - iter->second.second << std::flush;
-                if (unlikely(time(0) - iter->second.second > IDLE_TIME))
+                if (time(0) - iter->second.second > IDLE_TIME)
                     forDelete.insert(iter->first);
             }
             for_each(forDelete.begin(), forDelete.end(), [=](int _id){
@@ -53,7 +53,7 @@ namespace Chapp {
         }
         auto result = obj->getGroupInfoById(gid);
         auto users = obj->getUsersInGroup(gid);
-//        if (std::get<2>(result) == "0") //TODO ignore this warning, fix construct calling FUCK YOUR GODDAMN ARGS STEK29
+//        if (std::get<2>(result) == "0" //TODO ignore this warning, fix construct calling FUCK YOUR GODDAMN ARGS STEK29)
 //            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users);
 //        else
 //            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users, std::get<2>(result));
@@ -69,7 +69,7 @@ namespace Chapp {
     }
 
     GroupFactory::GroupFactory(){
-        obj = new Database("localhost", 6379);
+        obj = &Database::Instance();
         std::thread th_mod(&GroupFactory::moderateCachedGroups, this);
     }
 
