@@ -12,10 +12,11 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     start(QHostAddress::Any, quint16(port));
 }
 
-/// start -- starting the server
+/*! @brief starting the server
 ///
 /// @param address -- an IP-address that server should listen
 /// @param port -- a port that server should listen
+*/
 void Server::start(const QHostAddress &address, quint16 port)
 {
     connect(this, &Server::newConnection, this, &Server::slotNewConnection);
@@ -87,9 +88,6 @@ void Server::slotServerRead() //Читаем информацию из соке�
     }
 }
 
-/// slotClientDisconnected
-///
-/// handles disconnections
 void Server::slotClientDisconnected()
 {
     auto *client = (QTcpSocket*)sender();
@@ -101,7 +99,7 @@ void Server::slotClientDisconnected()
     }
 }
 
-/// stop -- stops and destroy the server
+
 void Server::stop()
 {
     foreach(QTcpSocket* val, clients)

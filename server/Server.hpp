@@ -19,6 +19,9 @@ public:
 
     explicit Server(QObject *parent = nullptr);
 
+    /*! @brief stops the server and close
+    *
+    */
     void stop();
 
     void incomingConnection(qintptr socketDescriptor) override;
@@ -31,6 +34,9 @@ public slots:
 
     void slotNewConnection();
     void slotServerRead();
+    /*!@brief slotClientDisconnected handles disconnections
+    *
+    */
     void slotClientDisconnected();
 
 private:
