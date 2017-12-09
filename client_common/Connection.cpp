@@ -86,6 +86,7 @@ void Connection::onReadyRead() {
 void Connection::onHostFound() {
     qDebug() << "server host: "
              << socket->peerAddress()
+             << socket->state()
              << " is able to connect\n";
 
 }

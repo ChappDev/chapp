@@ -11,8 +11,8 @@
 class DiffiHellmanCmd : public Command {
 public:
     DiffiHellmanCmd() = default;
-    virtual QByteArray* req(QByteArray* block);
-    virtual bool res(QByteArray& array, QQueue<Command*>* queue);
+    QByteArray* req(QByteArray* block);
+    bool res(QByteArray& array, QQueue<Command*>* queue);
 };
 
 

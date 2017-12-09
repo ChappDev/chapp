@@ -14,6 +14,7 @@
 #include <QDataStream>
 
 class Connection : public QObject {
+    Q_OBJECT
 public:
     enum SocketType{
         TCP,UDP,WEB
