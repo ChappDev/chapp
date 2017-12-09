@@ -47,21 +47,20 @@ public:
         USER
     };
 
-    static Database &Instance() {
-        static Database client; //! Guaranteed to be destroyed.
-        return client; //! Instantiated on first use.
-    }
+    static std::shared_ptr<Database> getInstance();
 
 private:
 
     // Disable all the constructors and destructors we don't want to be called.
     Database();
-    ~Database() {};
 
     Database(Database const &) = delete;
     Database &operator=(Database const &) = delete;
 
 public:
+
+    static std::shared_ptr<Database> instance;
+    ~Database() {};
 
     /**
      * We call this method each time we add a new user or group.
@@ -89,14 +88,14 @@ public:
      * Removes full information about the group and its users list.
      * @param gid ID of group which has to be deleted
      */
-    void deleteGroup(uint32_t gid);
+    void deleteGroup(Chapp::chapp_id_t gid);
 
     /**
      * Gives full information about group, besides the list of users.
      * @param gid ID of group
      * @return tuple of group_type, group_name, group_hash
      */
-    std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(uint32_t gid);
+    std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(Chapp::chapp_id_t gid);
 
     /**
      * @param username
@@ -108,13 +107,13 @@ public:
      * Removes information about the user, and also TODO deletes it from all groups.
      * @param uid ID of the user whose has to be deleted
      */
-    void deleteUser(uint32_t uid);
+    void deleteUser(Chapp::chapp_id_t uid);
 
     /**
      * @param uid ID of the user whose nickname we need
      * @return nickname
      */
-    std::string getUserNameById(uint32_t uid);
+    std::string getUserNameById(Chapp::chapp_id_t uid);
 
     /**
      * Adds the user's ID to the list of members of this group.
@@ -122,21 +121,21 @@ public:
      * @param gid ID of group
      * @return
      */
-    void addUserToGroup(uint32_t uid, uint32_t gid);
+    void addUserToGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid);
 
     /**
      * Removes passed user ID from passed group ID members list.
      * @param uid ID of user
      * @param gid ID of group
      */
-    void deleteUserFromGroup(uint32_t uid, uint32_t gid);
+    void removeUserFromGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid);
 
     /**
      * Gives full list of group members IDs
      * @param gid ID of group, the information about which we need
      * @return
      */
-    std::map<uint32_t, std::string> getUsersInGroup(uint32_t gid);
+    std::map<Chapp::chapp_id_t , std::string> getUsersInGroup(Chapp::chapp_id_t gid);
 
 private:
 
@@ -148,7 +147,7 @@ private:
      * @param gid
      * @return
      */
-    std::string userInGroupConcat(uint32_t gid);
+    std::string userInGroupConcat(Chapp::chapp_id_t gid);
 
     /**
      * Client from whom we do all requests.

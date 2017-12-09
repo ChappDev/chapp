@@ -1,0 +1,203 @@
+\hypertarget{class_database}{}\section{Database Class Reference}
+\label{class_database}\index{Database@{Database}}
+
+
+{\ttfamily \#include $<$Database.\+hpp$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{class_database_ad32ccd24dab0b01d6d932b17a98a8695}{type\+Of\+Id} \{ {\bfseries G\+R\+O\+UP}, 
+{\bfseries U\+S\+ER}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+Chapp\+::chapp\+\_\+id\+\_\+t \hyperlink{class_database_a282bee9ff58e4c3e554552de4087f5ac}{add\+Group} (Chapp\+::\+Group\+Type type, std\+::string name, std\+::string hash)
+\item 
+std\+::map$<$ Chapp\+::chapp\+\_\+id\+\_\+t, std\+::pair$<$ std\+::string, Chapp\+::\+Group\+Type $>$ $>$ \hyperlink{class_database_a286f48b8af7fa66023c6aba1b3e73127}{get\+List\+Of\+Groups} ()
+\item 
+void \hyperlink{class_database_a680206c34e9a5ddebda18e05a3f82529}{delete\+Group} (Chapp\+::chapp\+\_\+id\+\_\+t gid)
+\item 
+std\+::tuple$<$ Chapp\+::\+Group\+Type, std\+::string, std\+::string $>$ \hyperlink{class_database_a5a5714804e40ee468b2e5f1bccf8dc69}{get\+Group\+Info\+By\+Id} (Chapp\+::chapp\+\_\+id\+\_\+t gid)
+\item 
+Chapp\+::chapp\+\_\+id\+\_\+t \hyperlink{class_database_ad55a1036c3276f4220f0f63f72b0dce2}{add\+User} (std\+::string username)
+\item 
+void \hyperlink{class_database_a1736f6c7fc8132b793568924e857bfe2}{delete\+User} (Chapp\+::chapp\+\_\+id\+\_\+t uid)
+\item 
+std\+::string \hyperlink{class_database_a11c428536c444314610396754abc07bb}{get\+User\+Name\+By\+Id} (Chapp\+::chapp\+\_\+id\+\_\+t uid)
+\item 
+void \hyperlink{class_database_a7ab1f3d3cb8d2ca36e4fb6d749974868}{add\+User\+To\+Group} (Chapp\+::chapp\+\_\+id\+\_\+t uid, Chapp\+::chapp\+\_\+id\+\_\+t gid)
+\item 
+void \hyperlink{class_database_a63af1a2a95bffd362f7d35746758d856}{delete\+User\+From\+Group} (Chapp\+::chapp\+\_\+id\+\_\+t uid, Chapp\+::chapp\+\_\+id\+\_\+t gid)
+\item 
+std\+::map$<$ Chapp\+::chapp\+\_\+id\+\_\+t, std\+::string $>$ \hyperlink{class_database_aa6ec358d0c6a35f9b5ee18f723d01f91}{get\+Users\+In\+Group} (Chapp\+::chapp\+\_\+id\+\_\+t gid)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{class_database}{Database} \& \hyperlink{class_database_aa0586187fb141218dfb7fd094e88ecef}{Instance} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Singleton class which provides to call Redis key-\/value storage main methods needed on groups factory. 
+
+\subsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{class_database_ad32ccd24dab0b01d6d932b17a98a8695}\label{class_database_ad32ccd24dab0b01d6d932b17a98a8695}} 
+\index{Database@{Database}!type\+Of\+Id@{type\+Of\+Id}}
+\index{type\+Of\+Id@{type\+Of\+Id}!Database@{Database}}
+\subsubsection{\texorpdfstring{type\+Of\+Id}{typeOfId}}
+{\footnotesize\ttfamily enum \hyperlink{class_database_ad32ccd24dab0b01d6d932b17a98a8695}{Database\+::type\+Of\+Id}}
+
+Enum for increment\+Now\+Id(type\+Of\+Id type) method argument There is 2 now ID in database. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_database_a282bee9ff58e4c3e554552de4087f5ac}\label{class_database_a282bee9ff58e4c3e554552de4087f5ac}} 
+\index{Database@{Database}!add\+Group@{add\+Group}}
+\index{add\+Group@{add\+Group}!Database@{Database}}
+\subsubsection{\texorpdfstring{add\+Group()}{addGroup()}}
+{\footnotesize\ttfamily Chapp\+::chapp\+\_\+id\+\_\+t Database\+::add\+Group (\begin{DoxyParamCaption}\item[{Chapp\+::\+Group\+Type}]{type,  }\item[{std\+::string}]{name,  }\item[{std\+::string}]{hash }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & type of group (Public, Protected, Private) \\
+\hline
+{\em name} & name of group \\
+\hline
+{\em hash} & valid hash of this new group (\char`\"{}0\char`\"{} if groups is Public, password hash if group is protected) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new group ID 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_ad55a1036c3276f4220f0f63f72b0dce2}\label{class_database_ad55a1036c3276f4220f0f63f72b0dce2}} 
+\index{Database@{Database}!add\+User@{add\+User}}
+\index{add\+User@{add\+User}!Database@{Database}}
+\subsubsection{\texorpdfstring{add\+User()}{addUser()}}
+{\footnotesize\ttfamily Chapp\+::chapp\+\_\+id\+\_\+t Database\+::add\+User (\begin{DoxyParamCaption}\item[{std\+::string}]{username }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em username} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new user ID 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_a7ab1f3d3cb8d2ca36e4fb6d749974868}\label{class_database_a7ab1f3d3cb8d2ca36e4fb6d749974868}} 
+\index{Database@{Database}!add\+User\+To\+Group@{add\+User\+To\+Group}}
+\index{add\+User\+To\+Group@{add\+User\+To\+Group}!Database@{Database}}
+\subsubsection{\texorpdfstring{add\+User\+To\+Group()}{addUserToGroup()}}
+{\footnotesize\ttfamily void Database\+::add\+User\+To\+Group (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{uid,  }\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{gid }\end{DoxyParamCaption})}
+
+Adds the user\textquotesingle{}s ID to the list of members of this group. 
+\begin{DoxyParams}{Parameters}
+{\em uid} & ID of user \\
+\hline
+{\em gid} & ID of group \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_a680206c34e9a5ddebda18e05a3f82529}\label{class_database_a680206c34e9a5ddebda18e05a3f82529}} 
+\index{Database@{Database}!delete\+Group@{delete\+Group}}
+\index{delete\+Group@{delete\+Group}!Database@{Database}}
+\subsubsection{\texorpdfstring{delete\+Group()}{deleteGroup()}}
+{\footnotesize\ttfamily void Database\+::delete\+Group (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{gid }\end{DoxyParamCaption})}
+
+Removes full information about the group and its users list. 
+\begin{DoxyParams}{Parameters}
+{\em gid} & ID of group which has to be deleted \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_database_a1736f6c7fc8132b793568924e857bfe2}\label{class_database_a1736f6c7fc8132b793568924e857bfe2}} 
+\index{Database@{Database}!delete\+User@{delete\+User}}
+\index{delete\+User@{delete\+User}!Database@{Database}}
+\subsubsection{\texorpdfstring{delete\+User()}{deleteUser()}}
+{\footnotesize\ttfamily void Database\+::delete\+User (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{uid }\end{DoxyParamCaption})}
+
+Removes information about the user, and also T\+O\+DO deletes it from all groups. 
+\begin{DoxyParams}{Parameters}
+{\em uid} & ID of the user whose has to be deleted \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_database_a63af1a2a95bffd362f7d35746758d856}\label{class_database_a63af1a2a95bffd362f7d35746758d856}} 
+\index{Database@{Database}!delete\+User\+From\+Group@{delete\+User\+From\+Group}}
+\index{delete\+User\+From\+Group@{delete\+User\+From\+Group}!Database@{Database}}
+\subsubsection{\texorpdfstring{delete\+User\+From\+Group()}{deleteUserFromGroup()}}
+{\footnotesize\ttfamily void Database\+::delete\+User\+From\+Group (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{uid,  }\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{gid }\end{DoxyParamCaption})}
+
+Removes passed user ID from passed group ID members list. 
+\begin{DoxyParams}{Parameters}
+{\em uid} & ID of user \\
+\hline
+{\em gid} & ID of group \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_database_a5a5714804e40ee468b2e5f1bccf8dc69}\label{class_database_a5a5714804e40ee468b2e5f1bccf8dc69}} 
+\index{Database@{Database}!get\+Group\+Info\+By\+Id@{get\+Group\+Info\+By\+Id}}
+\index{get\+Group\+Info\+By\+Id@{get\+Group\+Info\+By\+Id}!Database@{Database}}
+\subsubsection{\texorpdfstring{get\+Group\+Info\+By\+Id()}{getGroupInfoById()}}
+{\footnotesize\ttfamily std\+::tuple$<$Chapp\+::\+Group\+Type, std\+::string, std\+::string$>$ Database\+::get\+Group\+Info\+By\+Id (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{gid }\end{DoxyParamCaption})}
+
+Gives full information about group, besides the list of users. 
+\begin{DoxyParams}{Parameters}
+{\em gid} & ID of group \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+tuple of group\+\_\+type, group\+\_\+name, group\+\_\+hash 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_a286f48b8af7fa66023c6aba1b3e73127}\label{class_database_a286f48b8af7fa66023c6aba1b3e73127}} 
+\index{Database@{Database}!get\+List\+Of\+Groups@{get\+List\+Of\+Groups}}
+\index{get\+List\+Of\+Groups@{get\+List\+Of\+Groups}!Database@{Database}}
+\subsubsection{\texorpdfstring{get\+List\+Of\+Groups()}{getListOfGroups()}}
+{\footnotesize\ttfamily std\+::map$<$Chapp\+::chapp\+\_\+id\+\_\+t, std\+::pair$<$std\+::string, Chapp\+::\+Group\+Type$>$ $>$ Database\+::get\+List\+Of\+Groups (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+map of group\+\_\+id and pair of group\+\_\+name group\+\_\+type 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_a11c428536c444314610396754abc07bb}\label{class_database_a11c428536c444314610396754abc07bb}} 
+\index{Database@{Database}!get\+User\+Name\+By\+Id@{get\+User\+Name\+By\+Id}}
+\index{get\+User\+Name\+By\+Id@{get\+User\+Name\+By\+Id}!Database@{Database}}
+\subsubsection{\texorpdfstring{get\+User\+Name\+By\+Id()}{getUserNameById()}}
+{\footnotesize\ttfamily std\+::string Database\+::get\+User\+Name\+By\+Id (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{uid }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em uid} & ID of the user whose nickname we need \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nickname 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_aa6ec358d0c6a35f9b5ee18f723d01f91}\label{class_database_aa6ec358d0c6a35f9b5ee18f723d01f91}} 
+\index{Database@{Database}!get\+Users\+In\+Group@{get\+Users\+In\+Group}}
+\index{get\+Users\+In\+Group@{get\+Users\+In\+Group}!Database@{Database}}
+\subsubsection{\texorpdfstring{get\+Users\+In\+Group()}{getUsersInGroup()}}
+{\footnotesize\ttfamily std\+::map$<$Chapp\+::chapp\+\_\+id\+\_\+t , std\+::string$>$ Database\+::get\+Users\+In\+Group (\begin{DoxyParamCaption}\item[{Chapp\+::chapp\+\_\+id\+\_\+t}]{gid }\end{DoxyParamCaption})}
+
+Gives full list of group members I\+Ds 
+\begin{DoxyParams}{Parameters}
+{\em gid} & ID of group, the information about which we need \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_database_aa0586187fb141218dfb7fd094e88ecef}\label{class_database_aa0586187fb141218dfb7fd094e88ecef}} 
+\index{Database@{Database}!Instance@{Instance}}
+\index{Instance@{Instance}!Database@{Database}}
+\subsubsection{\texorpdfstring{Instance()}{Instance()}}
+{\footnotesize\ttfamily static \hyperlink{class_database}{Database}\& Database\+::\+Instance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Guaranteed to be destroyed.
+
+Instantiated on first use. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Database.\+hpp\end{DoxyCompactItemize}

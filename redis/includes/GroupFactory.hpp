@@ -44,8 +44,8 @@
  * class GroupFactory {
  * public:
  *   GroupFactory& Instance();
- *   Group* by_id(int32_t gid);
- *   void remove_by_id(int32_t gid);
+ *   Group* by_id(chapp_id_t gid);
+ *   void remove_by_id(chapp_id_t gid);
  *
  *   template<class... Args>
  *   Group* construct(GroupType type, Args&&... args);
@@ -57,12 +57,9 @@ namespace Chapp {
 
     class GroupFactory {
     public:
-        static GroupFactory& Instance()
-        {
-            static GroupFactory instance; // Guaranteed to be destroyed.
-            // Instantiated on first use.
-            return instance;
-        }
+
+
+        static std::shared_ptr<GroupFactory> getInstance();
 
         GroupFactory(const GroupFactory&) = delete;
         GroupFactory& operator=(const GroupFactory&) = delete;
@@ -70,26 +67,34 @@ namespace Chapp {
         GroupFactory& operator=(GroupFactory&&) = delete;
 
     private:
-        Database *obj;
+        std::shared_ptr<Database> dbConnect;
+        static std::shared_ptr<GroupFactory> instance;
+
         GroupFactory();
 
     public:
-        Group* by_id(int32_t gid);
+        Group* by_id(chapp_id_t gid);
 
-        void remove(uint32_t gid, bool fromDB);
+        void runModerator();
+
+        void remove(chapp_id_t gid, bool fromDB);
+
+        void addUserToGroup(chapp_id_t uid, chapp_id_t gid);
+
+        void removeUserFromGroup(chapp_id_t uid, chapp_id_t gid);
 
         template<class... Args>
         Group* construct(GroupType type, Args&&... args);
 
         ~GroupFactory() {
             for (auto &it : groups_by_id) {
-                delete it.second.first;
+                delete it.second;
             }
         }
 
     private:
         void moderateCachedGroups();
-        map<int32_t, std::pair<Group*, time_t>> groups_by_id;
+        map<chapp_id_t , Group*> groups_by_id;
     };
 
 }  // namespace Chapp
