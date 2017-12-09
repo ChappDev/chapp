@@ -25,19 +25,19 @@
 
 namespace Chapp {
 
-enum class Error {
-    Ok,
+    enum class Error {
+        Ok,
 
-    NotInGroup,
-    AlreadyInGroup,
+        NotInGroup,
+        AlreadyInGroup,
 
-    AlreadyInvited,
+        AlreadyInvited,
 
-    InvalidUserId,
-    InvalidGroupId,
+        InvalidUserId,
+        InvalidGroupId,
 
-    IncorrectHash,
-};
+        IncorrectHash,
+    };
 
 }  // namespace Chapp
 

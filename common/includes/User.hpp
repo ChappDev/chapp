@@ -52,6 +52,7 @@ namespace Chapp {
 
     private:
         friend class UserFactory; // only allow construct users via UserFactory
+        friend class GroupFactory;
 
         User(chapp_id_t uid, const string& username);
         User(chapp_id_t uid, string username, Phash hash);

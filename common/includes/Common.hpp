@@ -26,7 +26,7 @@
 namespace Chapp {
     // User/Group id
     using chapp_id_t = int;
-} // namespace Chapp
+}
 
 #include "GroupTypes.hpp"
 #include "Phash.hpp"

@@ -108,7 +108,7 @@ namespace Chapp {
 
         // TODO(stek): This can (and will) blow up one day
         if (users_by_id.empty()) {
-            GroupFactory::Instance().remove(this);
+            GroupFactory::getInstance()->remove(this->id, true);
         }
 
         return Error::Ok;
@@ -118,24 +118,25 @@ namespace Chapp {
         return users_by_id.find(uid) != users_by_id.end();
     }
 
-    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, User* creator)
-            : PublicGroup(gid, gname, { std::make_pair(creator->id, creator) })
+    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash)
+            : PublicGroup(gid, gname, { std::make_pair(creator->id, creator) }, ghash)
     {
         creator->add_to_group(*this);
     }
 
-    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users)
+    PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash)
             : Group(gid, GroupType::Public, gname, users)
+            , hash(ghash)
     {}
 
     Phash PublicGroup::gen_hash(chapp_id_t uid) const {
         (void) uid;
-        return {};
+        return hash;
     }
 
     bool PublicGroup::check_hash(chapp_id_t uid, const Phash & /*hash*/) const {
         (void) uid;
-        return true;
+        return hash == this->hash;
     }
 
     ProtectedGroup::ProtectedGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash)
