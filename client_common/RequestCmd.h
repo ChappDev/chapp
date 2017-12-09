@@ -17,7 +17,7 @@ private:
 
 public:
     enum Cmd{
-        initDiffiHellman,
+        initDiffieHellman,
     };
     static RequestCmd* getInstance();
 

@@ -4,13 +4,13 @@
 
 #include "RequestCmd.h"
 #include "Command.h"
-#include "DiffiHellmanCmd.h"
+#include "DiffieHellmanCmd.h"
 
 QByteArray* RequestCmd::makeRequest(RequestCmd::Cmd cmd, QQueue<Command*> *queue,QByteArray* block) {
     QByteArray* toResponse = nullptr;
     switch(cmd){
-        case initDiffiHellman:
-            Command* command = new DiffiHellmanCmd();
+        case initDiffieHellman:
+            Command* command = new DiffieHellmanCmd();
             toResponse = command->req(block);
             queue->enqueue(command);
             break;

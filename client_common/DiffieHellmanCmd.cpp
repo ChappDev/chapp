@@ -4,12 +4,12 @@
 
 #include <QIODevice>
 #include <QDataStream>
-#include "DiffiHellmanCmd.h"
-QByteArray* DiffiHellmanCmd::req(QByteArray* block) {
+#include "DiffieHellmanCmd.h"
+QByteArray* DiffieHellmanCmd::req(QByteArray* block) {
     QDataStream out(block, QIODevice::WriteOnly);
     out << "test";
     return block;
 }
-bool DiffiHellmanCmd::res(QByteArray &array, QQueue<Command*> *queue) {
+bool DiffieHellmanCmd::res(QByteArray &array, QQueue<Command*> *queue) {
     return false;
 }
