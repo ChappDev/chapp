@@ -21,22 +21,38 @@
 // SOFTWARE.
 
 #include "GroupFactory.hpp"
+#include "UserFactory.hpp"
+#include "Phash.hpp"
 #define unlikely(expr) __builtin_expect(!!(expr),0)
-#define IDLE_TIME 5
-#define SLEEP_TIME 3
+#define IDLE_TIME 1
+#define SLEEP_TIME 1
 
 std::mutex locker;
 
 namespace Chapp {
 
+    std::shared_ptr<GroupFactory> GroupFactory::instance;
+
+    std::shared_ptr<GroupFactory> GroupFactory::getInstance() {
+        if(!instance) instance.reset(new GroupFactory);
+        return instance;
+    }
+
+    GroupFactory::GroupFactory() : dbConnect(Database::getInstance()){
+        std::cout << "Factory created" << std::endl;
+    }
+
+    void GroupFactory::runModerator() {
+        std::thread th_mod(&GroupFactory::moderateCachedGroups, this);
+    }
     void GroupFactory::moderateCachedGroups() {
         while (true) {
             std::cout << std::endl;
             locker.lock();
             std::set<int> forDelete;
             for (auto iter = groups_by_id.begin(); iter != groups_by_id.end(); iter++) {
-                std::cout << time(nullptr) - iter->second.second << std::flush;
-                if (time(0) - iter->second.second > IDLE_TIME)
+                std::cout << time(nullptr) - iter->second->last_activity << std::flush;
+                if (time(0) - iter->second->last_activity > IDLE_TIME)
                     forDelete.insert(iter->first);
             }
             for_each(forDelete.begin(), forDelete.end(), [=](int _id){
@@ -47,30 +63,35 @@ namespace Chapp {
         }
     }
 
-    Group* GroupFactory::by_id(int32_t gid) {
+    Group* GroupFactory::by_id(chapp_id_t gid) {
         if (groups_by_id.count(gid)){
-            return groups_by_id[gid].first;
+            return groups_by_id[gid];
         }
-        auto result = obj->getGroupInfoById(gid);
-        auto users = obj->getUsersInGroup(gid);
-//        if (std::get<2>(result) == "0" //TODO ignore this warning, fix construct calling FUCK YOUR GODDAMN ARGS STEK29)
-//            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users);
-//        else
-//            return construct(std::get<Chapp::GroupType>(result), gid, std::get<1>(result), users, std::get<2>(result));
+        std::tuple<GroupType, std::string, std::string> result = dbConnect->getGroupInfoById(gid);
+        std::map<chapp_id_t , std::string> users = dbConnect->getUsersInGroup(gid);
+
+        std::map<chapp_id_t, User*> usersOfThisGroup;
+
+        for(auto iter = users.begin(); iter != users.end(); iter++){
+            usersOfThisGroup.insert({iter->first, UserFactory::Instance().construct(iter->first, iter->second)});
+        }
+
+        GroupType type = std::get<0>(result);
+        const string groupName(std::get<1>(result));
+        Phash newGroupHash(std::get<2>(result));
+
+        auto newGroup = construct(type, gid, groupName, usersOfThisGroup, newGroupHash);
+        groups_by_id.insert({gid, newGroup});
+        return newGroup;
     }
 
-    void GroupFactory::remove(uint32_t gid, bool fromDB) {
+    void GroupFactory::remove(chapp_id_t gid, bool fromDB) {
         if (fromDB){
-            obj->deleteGroup(gid);
+            dbConnect->deleteGroup(gid);
         }
         auto it = this->groups_by_id.find(gid);
-        delete it->second.first;
+        delete it->second;
         groups_by_id.erase(it);
-    }
-
-    GroupFactory::GroupFactory(){
-        obj = &Database::Instance();
-        std::thread th_mod(&GroupFactory::moderateCachedGroups, this);
     }
 
     template<class... Args>
@@ -89,6 +110,15 @@ namespace Chapp {
             }
             return group;
     }
+
+    void GroupFactory::addUserToGroup(chapp_id_t uid, chapp_id_t gid) {
+        dbConnect->addUserToGroup(uid, gid);
+    }
+
+    void GroupFactory::removeUserFromGroup(chapp_id_t uid, chapp_id_t gid) {
+        dbConnect->removeUserFromGroup(uid, gid);
+    }
+
 
 }
 

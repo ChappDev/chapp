@@ -34,6 +34,8 @@
 
 Database::Database() {
 
+    std::cout << "Database created" << std::endl;
+
     cpp_redis::active_logger = std::unique_ptr<cpp_redis::logger>(new cpp_redis::logger);
 
     client.connect("localhost", 6379,
@@ -44,7 +46,9 @@ Database::Database() {
                    });
 }
 
-std::string Database::userInGroupConcat(uint32_t gid) {
+std::shared_ptr<Database> Database::instance;
+
+std::string Database::userInGroupConcat(Chapp::chapp_id_t gid) {
     return GID_USER + std::to_string(gid);
 }
 
@@ -66,7 +70,7 @@ int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash
     return stoi(newGroupId);
 }
 
-std::tuple<Chapp::GroupType, std::string, std::string> Database::getGroupInfoById(uint32_t gid) {
+std::tuple<Chapp::GroupType, std::string, std::string> Database::getGroupInfoById(Chapp::chapp_id_t gid) {
     std::string idAsString = std::to_string(gid);
     auto nameRequest = client.hget(GID_NAME, idAsString);
     auto hashRequest = client.hget(GID_HASH, idAsString);
@@ -105,7 +109,7 @@ std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroup
 
 }
 
-void Database::deleteGroup(uint32_t gid) {
+void Database::deleteGroup(Chapp::chapp_id_t gid) {
 
     std::vector<std::string> query = {std::to_string(gid)};
     client.hdel(GID_NAME, query);
@@ -123,43 +127,48 @@ int Database::addUser(std::string username) {
     return stoi(newUserId);
 }
 
-std::string Database::getUserNameById(uint32_t uid) {
+std::string Database::getUserNameById(Chapp::chapp_id_t uid) {
     auto nowUserName = client.hget(UID_UNAME, std::to_string(uid));
     client.sync_commit();
     return nowUserName.get().as_string();
 }
 
-void Database::deleteUser(uint32_t uid) {
+void Database::deleteUser(Chapp::chapp_id_t uid) {
 
     client.hdel(USERS, {std::to_string(uid)});
     client.sync_commit();
 
 }
 
-void Database::addUserToGroup(uint32_t uid, uint32_t gid) {
+void Database::addUserToGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid) {
 
     client.sadd(userInGroupConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
 
-void Database::deleteUserFromGroup(uint32_t uid, uint32_t gid) {
+void Database::removeUserFromGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid) {
 
     client.srem(userInGroupConcat(gid), {std::to_string(uid)});
     client.sync_commit();
 
 }
 
-std::map<uint32_t, std::string> Database::getUsersInGroup(uint32_t gid) {
+std::map<Chapp::chapp_id_t , std::string> Database::getUsersInGroup(Chapp::chapp_id_t gid) {
 
     auto queryRes = client.smembers(userInGroupConcat(gid));
     client.sync_commit();
     auto parsedResponse = queryRes.get().as_array();
-    std::map<uint32_t, std::string> members;
+    std::map<Chapp::chapp_id_t , std::string> members;
     for (auto iter = parsedResponse.begin(); iter != parsedResponse.end(); ++iter) {
         auto uid = stoi(iter->as_string());
-        members.insert(std::pair<uint32_t, std::string>(uid, getUserNameById(uid)));
+        members.insert(std::pair<Chapp::chapp_id_t , std::string>(uid, getUserNameById(uid)));
     }
     return members;
 
+}
+
+std::shared_ptr<Database> Database::getInstance() {
+    if(!instance) instance.reset(new Database);
+    return instance;
 }
