@@ -40,6 +40,9 @@ namespace Chapp {
 
     class Group {
     public:
+
+        friend class GroupFactory;
+
         Group() = delete;
         virtual ~Group() = default;
         Group(const Group&) = default;
@@ -174,7 +177,7 @@ namespace Chapp {
          * @param gname group name
          * @param creator user creating the group
          */
-        PublicGroup(chapp_id_t gid, const string& gname, User* creator);
+        PublicGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash);
 
         /*!
          * Construct group from DB
@@ -182,7 +185,7 @@ namespace Chapp {
          * @param gname group name
          * @param users ids:users in the group
          */
-        PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users);
+        PublicGroup(chapp_id_t gid, const string& gname, const map<chapp_id_t, User*>& users, Phash ghash);
 
     private:
         /*!
@@ -197,6 +200,7 @@ namespace Chapp {
          */
         bool check_hash(chapp_id_t uid, const Phash& hash) const override;
 
+        Phash hash;
     };
 
     class ProtectedGroup : public Group {
