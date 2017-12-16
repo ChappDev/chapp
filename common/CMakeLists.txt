@@ -13,7 +13,7 @@ set(SOURCE_FILES
   Group.cpp
   Common.cpp
   Util.cpp
-
+  UserFactory.cpp
 
   includes/User.hpp
   includes/Session.hpp

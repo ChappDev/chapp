@@ -1,6 +1,7 @@
 // The MIT License (MIT)
 //
 // Copyright (c) 2017 Viktor Oreshkin <imselfish@stek29.rocks>
+//                    George Gabolaev <gabolaev98@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +59,7 @@ namespace Chapp {
             return Error::AlreadyInGroup; // new_uid already in group
         }
 
-        auto new_user = UserFactory::Instance().by_id(new_uid);
+        auto new_user = UserFactory::Instance()->by_id(new_uid);
 
         if (new_user == nullptr) {
             return Error::InvalidUserId; // invalid user
@@ -74,7 +75,7 @@ namespace Chapp {
             return Error::IncorrectHash; // Wrong hash
         }
 
-        auto user = UserFactory::Instance().by_id(uid);
+        auto user = UserFactory::Instance()->by_id(uid);
         if (user == nullptr) {
             return Error::InvalidUserId; // invalid user
         }
@@ -108,7 +109,7 @@ namespace Chapp {
 
         // TODO(stek): This can (and will) blow up one day
         if (users_by_id.empty()) {
-            GroupFactory::getInstance()->remove(this->id, true);
+            GroupFactory::Instance()->remove(this->id, true);
         }
 
         return Error::Ok;
