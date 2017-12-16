@@ -59,7 +59,7 @@ namespace Chapp {
     public:
 
 
-        static std::shared_ptr<GroupFactory> getInstance();
+        static std::shared_ptr<GroupFactory> Instance();
 
         GroupFactory(const GroupFactory&) = delete;
         GroupFactory& operator=(const GroupFactory&) = delete;
