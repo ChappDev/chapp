@@ -22,44 +22,45 @@
 
 #include "GroupFactory.hpp"
 #include "UserFactory.hpp"
-#include "Phash.hpp"
 #define unlikely(expr) __builtin_expect(!!(expr),0)
 #define IDLE_TIME 1
 #define SLEEP_TIME 1
 
-std::mutex locker;
+
 
 namespace Chapp {
 
     std::shared_ptr<GroupFactory> GroupFactory::instance;
 
-    std::shared_ptr<GroupFactory> GroupFactory::getInstance() {
+    std::shared_ptr<GroupFactory> GroupFactory::Instance() {
         if(!instance) instance.reset(new GroupFactory);
         return instance;
     }
 
-    GroupFactory::GroupFactory() : dbConnect(Database::getInstance()){
+    GroupFactory::GroupFactory() : dbConnect(Database::Instance()){
         std::cout << "Factory created" << std::endl;
     }
 
     void GroupFactory::runModerator() {
         std::thread th_mod(&GroupFactory::moderateCachedGroups, this);
     }
+
     void GroupFactory::moderateCachedGroups() {
+        static std::mutex locker;
         while (true) {
             std::cout << std::endl;
             locker.lock();
             std::set<int> forDelete;
-            for (auto iter = groups_by_id.begin(); iter != groups_by_id.end(); iter++) {
-                std::cout << time(nullptr) - iter->second->last_activity << std::flush;
-                if (time(0) - iter->second->last_activity > IDLE_TIME)
-                    forDelete.insert(iter->first);
+            for (auto &iter : groups_by_id) {
+                std::cout << time(nullptr) - iter.second->last_activity << std::flush;
+                if (time(nullptr) - iter.second->last_activity > IDLE_TIME)
+                    forDelete.insert(iter.first);
             }
             for_each(forDelete.begin(), forDelete.end(), [=](int _id){
                 remove(_id, false);
             });
             locker.unlock();
-            sleep(SLEEP_TIME);
+            sleep(SLEEP_TIME); //TODO timer
         }
     }
 
@@ -73,7 +74,7 @@ namespace Chapp {
         std::map<chapp_id_t, User*> usersOfThisGroup;
 
         for(auto iter = users.begin(); iter != users.end(); iter++){
-            usersOfThisGroup.insert({iter->first, UserFactory::Instance().construct(iter->first, iter->second)});
+            usersOfThisGroup.insert({iter->first, UserFactory::Instance()->construct(iter->first, iter->second)});
         }
 
         GroupType type = std::get<0>(result);
@@ -118,7 +119,6 @@ namespace Chapp {
     void GroupFactory::removeUserFromGroup(chapp_id_t uid, chapp_id_t gid) {
         dbConnect->removeUserFromGroup(uid, gid);
     }
-
 
 }
 
