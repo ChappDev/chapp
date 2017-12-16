@@ -1,6 +1,7 @@
 // The MIT License (MIT)
 //
 // Copyright (c) 2017 Viktor Oreshkin <imselfish@stek29.rocks>
+//                    George Gabolaev <gabolaev98@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,10 +43,11 @@ namespace Chapp {
     User::~User() {
         for (auto &group_id : joined_groups) {
             // TODO(stek): Avoid constructing groups just to delete user?
-//            auto group = GroupFactory::Instance().by_id(group_id);
-//            if (group == nullptr) {
-//                continue; // WTF?!
-//            }
+            auto group = GroupFactory::Instance()->by_id(group_id);
+            if (group == nullptr) {
+                continue; // WTF?!
+            }
+            group->leave(this->id);
 //
 //            // TODO(stek): When socket is added, avoid notifying it here
 //            group->leave(id);
@@ -80,7 +82,7 @@ namespace Chapp {
             return Error::AlreadyInGroup; // Not inserted
         }
 
-        GroupFactory::getInstance()->addUserToGroup(this->id, group.id);
+        GroupFactory::Instance()->addUserToGroup(this->id, group.id);
 
         // TODO(stek): notify socket
         return Error::Ok;
@@ -92,7 +94,7 @@ namespace Chapp {
             return Error::NotInGroup; // Not erased
         }
 
-        GroupFactory::getInstance()->removeUserFromGroup(this->id, group.id);
+        GroupFactory::Instance()->removeUserFromGroup(this->id, group.id);
 
         return Error::Ok;
     }

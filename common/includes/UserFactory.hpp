@@ -32,14 +32,12 @@
 
 namespace Chapp {
 
+
+
     class UserFactory {
     public:
-        static UserFactory& Instance()
-        {
-            static UserFactory instance; // Guaranteed to be destroyed.
-            // Instantiated on first use.
-            return instance;
-        }
+
+        static std::shared_ptr<UserFactory> Instance();
 
         UserFactory(const UserFactory&) = delete;
         UserFactory& operator=(const UserFactory&) = delete;
@@ -47,6 +45,9 @@ namespace Chapp {
         UserFactory& operator=(UserFactory&&) = delete;
 
     private:
+
+        static std::shared_ptr<UserFactory> instance;
+
         UserFactory() = default;
 
     public:
