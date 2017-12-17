@@ -41,16 +41,13 @@ namespace Chapp {
     {};
 
     User::~User() {
+        auto groupFactory = GroupFactory::Instance();
         for (auto &group_id : joined_groups) {
             // TODO(stek): Avoid constructing groups just to delete user?
-            auto group = GroupFactory::Instance()->by_id(group_id);
-            if (group == nullptr) {
-                continue; // WTF?!
-            }
-            group->leave(this->id);
-//
-//            // TODO(stek): When socket is added, avoid notifying it here
-//            group->leave(id);
+
+            groupFactory->removeUserFromGroup(this->id, group_id);
+
+            // TODO(stek): When socket is added, avoid notifying it here
         }
     }
 

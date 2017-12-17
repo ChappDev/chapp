@@ -26,6 +26,7 @@
 #include "Common.hpp"
 #include "Group.hpp"
 #include "User.hpp"
+#include "Database.hpp"
 
 #include <map>
 #include <memory>
@@ -33,16 +34,18 @@
 namespace Chapp {
 
 
-
     class UserFactory {
     public:
 
         static std::shared_ptr<UserFactory> Instance();
 
-        UserFactory(const UserFactory&) = delete;
-        UserFactory& operator=(const UserFactory&) = delete;
-        UserFactory(UserFactory&&) = delete;
-        UserFactory& operator=(UserFactory&&) = delete;
+        UserFactory(const UserFactory &) = delete;
+
+        UserFactory &operator=(const UserFactory &) = delete;
+
+        UserFactory(UserFactory &&) = delete;
+
+        UserFactory &operator=(UserFactory &&) = delete;
 
     private:
 
@@ -51,7 +54,7 @@ namespace Chapp {
         UserFactory() = default;
 
     public:
-        User* by_id(chapp_id_t uid) const {
+        User *by_id(chapp_id_t uid) const {
             auto it = users_by_id.find(uid);
 
             if (it == users_by_id.end()) {
@@ -62,8 +65,9 @@ namespace Chapp {
         };
 
         template<class... Args>
-        User* construct(Args&&... args) {
-            auto user = new User(args...);
+        User *construct(const std::string &username) {
+            int uid = Database::Instance()->addUser(username);
+            auto user = new User(uid, username);
             users_by_id.insert(std::make_pair(user->id, user));
             return user;
         }
@@ -75,7 +79,7 @@ namespace Chapp {
         }
 
     private:
-        map<chapp_id_t, User*> users_by_id;
+        map<chapp_id_t, User *> users_by_id;
 
     };
 
