@@ -4,46 +4,50 @@
 
 #ifndef CLIENT_COMMON_CONNECT_H
 #define CLIENT_COMMON_CONNECT_H
-
-#include <QObject>
-#include <QAbstractSocket>
+//
+// Created by Vetas Ramvet on 17.12.2017.
+//
 #include <QTcpSocket>
-#include "RequestCmd.h"
-#include <QUdpSocket>
-#include <cassert>
-#include <QDataStream>
+#include <QTime>
+#include <QTimer>
+#include <QTimerEvent>
 
-class Connection : public QObject {
-    Q_OBJECT
+class Connection : public QTcpSocket
+{
+Q_OBJECT
 public:
-    enum SocketType{
-        TCP,UDP,WEB
-    };
-    class SocketFactory{
-    public:
-        static QAbstractSocket* get_by_type(Connection* conn, Connection::SocketType type);
-    };
-/**
- * slots is a Qt keyword for substitution handlers of signals
- */
+	
+	Connection(QObject *parent = 0);
+	
+	bool connect();
+	
+	void sendMessage(const QString &message);
+
+
+signals:
+	
+	void readyForUse();
+	//void newMessage(const QString &from, const QString &message);
+
+
 private slots:
-    void onConnected();
-    void onDisconnected();
-    void onReadyRead();
-    void onError(QAbstractSocket::SocketError socketError);
-    void onHostFound();
+	
+	void read();
+	
+	void onConnected();
+	
+	void onDisconnected();
+	
+	void sendPing();
 
-public:
-    Connection(SocketType type, QString* newname);
-    virtual ~Connection();
-    void attachToServer(QString& address, quint16 port);
+protected:
+	
+	void timerEvent(QTimerEvent *timerEvent) override;
+
 private:
-    QAbstractSocket* socket;
-    QString client_name;
-    QQueue<Command*>* queueOfRequests;
-    quint16 retriviedBytes = 0;
-    bool attachSocketSlots();
+	QTimer pingTimer;
+	QTime pongTime;
+	int transferTimerId;
 };
-
 
 #endif //CLIENT_COMMON_CONNECT_H
