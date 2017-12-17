@@ -74,6 +74,10 @@ namespace Chapp {
     public:
         Group* by_id(chapp_id_t gid);
 
+        uint countOfGroups();
+
+        void printFullInfoAboutGroups();
+
         void runModerator();
 
         Group* create(GroupType type, const string &name, Phash hash);
