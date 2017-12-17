@@ -17,7 +17,7 @@ class Connection : public QTcpSocket
 Q_OBJECT
 public:
 	
-	Connection(QObject *parent = 0);
+	explicit Connection(QObject *parent = 0);
 	
 	bool connect();
 	
