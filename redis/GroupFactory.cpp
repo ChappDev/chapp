@@ -37,7 +37,7 @@ namespace Chapp {
         return instance;
     }
 
-    GroupFactory::GroupFactory() : dbConnect(Database::Instance()){
+    GroupFactory::GroupFactory(){
         std::cout << "Factory created" << std::endl;
     }
 
@@ -68,13 +68,13 @@ namespace Chapp {
         if (groups_by_id.count(gid)){
             return groups_by_id[gid];
         }
-        std::tuple<GroupType, std::string, std::string> result = dbConnect->getGroupInfoById(gid);
-        std::map<chapp_id_t , std::string> users = dbConnect->getUsersInGroup(gid);
+        std::tuple<GroupType, std::string, std::string> result = Database::Instance()->getGroupInfoById(gid);
+        std::map<chapp_id_t , std::string> users = Database::Instance()->getUsersInGroup(gid);
 
         std::map<chapp_id_t, User*> usersOfThisGroup;
 
-        for(auto iter = users.begin(); iter != users.end(); iter++){
-            usersOfThisGroup.insert({iter->first, UserFactory::Instance()->construct(iter->first, iter->second)});
+        for (auto &user : users) {
+            usersOfThisGroup.insert({user.first, UserFactory::Instance()->by_id(user.first)});
         }
 
         GroupType type = std::get<0>(result);
@@ -86,9 +86,15 @@ namespace Chapp {
         return newGroup;
     }
 
+
+    Group *GroupFactory::create(GroupType type, const string &name, Phash hash) {
+        int newGroupId = Database::Instance()->addGroup(type, name, string(hash));
+        return by_id(newGroupId);
+    }
+
     void GroupFactory::remove(chapp_id_t gid, bool fromDB) {
         if (fromDB){
-            dbConnect->deleteGroup(gid);
+            Database::Instance()->deleteGroup(gid);
         }
         auto it = this->groups_by_id.find(gid);
         delete it->second;
@@ -113,11 +119,12 @@ namespace Chapp {
     }
 
     void GroupFactory::addUserToGroup(chapp_id_t uid, chapp_id_t gid) {
-        dbConnect->addUserToGroup(uid, gid);
+        Database::Instance()->addUserToGroup(uid, gid);
     }
 
     void GroupFactory::removeUserFromGroup(chapp_id_t uid, chapp_id_t gid) {
-        dbConnect->removeUserFromGroup(uid, gid);
+        by_id(gid)->users_by_id.erase(gid);
+        Database::Instance()->removeUserFromGroup(uid, gid);
     }
 
 }
