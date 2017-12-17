@@ -10,33 +10,28 @@
 
 int main(){
 
-    std::shared_ptr<Chapp::GroupFactory> factory(Chapp::GroupFactory::getInstance());
+    using namespace Chapp;
 
-    std::shared_ptr<Database> db(Database::getInstance());
+    auto raggamote = GroupFactory::Instance()->create(Chapp::GroupType::Public, "raggamote", Phash("12345679s234567890ss"));
+    auto gabolaev = UserFactory::Instance()->construct("gabolaev");
+    auto tekeev = UserFactory::Instance()->construct("tekeev");
+    auto movsesov = UserFactory::Instance()->construct("movsesov");
+    auto ramazanov = UserFactory::Instance()->construct("ramazanov");
 
-    Chapp::chapp_id_t u1index = db->addUser("gabolaev");
-    Chapp::chapp_id_t u2index = db->addUser("tekeev");
-    Chapp::chapp_id_t u3index = db->addUser("movsesov");
-    Chapp::chapp_id_t u4index = db->addUser("ramazanov");
-    Chapp::chapp_id_t u5index = db->addUser("durov");
-    Chapp::chapp_id_t u6index = db->addUser("cat_fil");
-    Chapp::chapp_id_t u7index = db->addUser("big_cat");
+    raggamote->join(gabolaev->id, Phash("12345679s234567890ss"));
+    raggamote->join(tekeev->id, Phash("12345679s234567890ss"));
+    raggamote->join(movsesov->id, Phash("12345679s234567890ss"));
+    raggamote->join(ramazanov->id, Phash("12345679s234567890ss"));
 
-    Chapp::chapp_id_t g1index = db->addGroup(Chapp::GroupType::Private, "raggamote", "sexhashwith20symbols");
-    Chapp::chapp_id_t g2index = db->addGroup(Chapp::GroupType::Private, "telegram", "12345678901234567890");
+    auto telegram = GroupFactory::Instance()->create(Chapp::GroupType::Private, "telegram", Phash("uh!@?8&t%>P)1Gjz@ACq"));
+    auto success1 = telegram->join(tekeev->id, Phash("uh!@?8&t%>P)1Gjz@ACq")); //with valid hash
+    auto error = telegram->join(gabolaev->id, Phash("uh!@?8&t%>123Gjz@ACq")); //with wrong hash
+    auto success2 = telegram->join(gabolaev->id, Phash("uh!@?8&t%>P)1Gjz@ACq")); //with valid hash
 
-    db->addUserToGroup(u1index, g1index);
-    db->addUserToGroup(u2index, g1index);
-    db->addUserToGroup(u3index, g1index);
-    db->addUserToGroup(u4index, g1index);
+    raggamote->leave(gabolaev->id);
+    raggamote->leave(tekeev->id);
+    raggamote->leave(movsesov->id);
+    raggamote->leave(ramazanov->id);
 
-    db->addUserToGroup(u5index, g2index);
-    db->addUserToGroup(u6index, g2index);
-    db->addUserToGroup(u7index, g2index);
-
-    auto group1 = factory->by_id(g1index);
-    auto group2 = factory->by_id(g2index);
-
-    std::cout << "test";
-
+    std::cout << "done";
 }
