@@ -67,7 +67,6 @@ namespace Chapp {
         GroupFactory& operator=(GroupFactory&&) = delete;
 
     private:
-        std::shared_ptr<Database> dbConnect;
         static std::shared_ptr<GroupFactory> instance;
 
         GroupFactory();
@@ -76,6 +75,8 @@ namespace Chapp {
         Group* by_id(chapp_id_t gid);
 
         void runModerator();
+
+        Group* create(GroupType type, const string &name, Phash hash);
 
         void remove(chapp_id_t gid, bool fromDB);
 

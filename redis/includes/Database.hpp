@@ -78,26 +78,26 @@ namespace Chapp {
          * @param hash valid hash of this new group ("0" if groups is Public, password hash if group is protected)
          * @return new group ID
          */
-        int addGroup(Chapp::GroupType type, std::string name, std::string hash);
+        int addGroup(GroupType type, std::string name, std::string hash);
 
         /**
          *
          * @return map of group_id and pair of group_name group_type
          */
-        std::map<int, std::pair<std::string, Chapp::GroupType>> getListOfGroups();
+        std::map<int, std::pair<std::string, GroupType>> getListOfGroups();
 
         /**
          * Removes full information about the group and its users list.
          * @param gid ID of group which has to be deleted
          */
-        void deleteGroup(Chapp::chapp_id_t gid);
+        void deleteGroup(chapp_id_t gid);
 
         /**
          * Gives full information about group, besides the list of users.
          * @param gid ID of group
          * @return tuple of group_type, group_name, group_hash
          */
-        std::tuple<Chapp::GroupType, std::string, std::string> getGroupInfoById(Chapp::chapp_id_t gid);
+        std::tuple<GroupType, std::string, std::string> getGroupInfoById(chapp_id_t gid);
 
         /**
          * @param username
@@ -109,13 +109,13 @@ namespace Chapp {
          * Removes information about the user, and also TODO deletes it from all groups.
          * @param uid ID of the user whose has to be deleted
          */
-        void deleteUser(Chapp::chapp_id_t uid);
+        void deleteUser(chapp_id_t uid);
 
         /**
          * @param uid ID of the user whose nickname we need
          * @return nickname
          */
-        std::string getUserNameById(Chapp::chapp_id_t uid);
+        std::string getUserNameById(chapp_id_t uid);
 
         /**
          * Adds the user's ID to the list of members of this group.
@@ -123,21 +123,21 @@ namespace Chapp {
          * @param gid ID of group
          * @return
          */
-        void addUserToGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid);
+        void addUserToGroup(chapp_id_t uid, chapp_id_t gid);
 
         /**
          * Removes passed user ID from passed group ID members list.
          * @param uid ID of user
          * @param gid ID of group
          */
-        void removeUserFromGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid);
+        void removeUserFromGroup(chapp_id_t uid, chapp_id_t gid);
 
         /**
          * Gives full list of group members IDs
          * @param gid ID of group, the information about which we need
          * @return
          */
-        std::map<Chapp::chapp_id_t, std::string> getUsersInGroup(Chapp::chapp_id_t gid);
+        std::map<chapp_id_t, std::string> getUsersInGroup(chapp_id_t gid);
 
     private:
 
@@ -149,7 +149,7 @@ namespace Chapp {
          * @param gid
          * @return
          */
-        std::string userInGroupConcat(Chapp::chapp_id_t gid);
+        std::string userInGroupConcat(chapp_id_t gid);
 
         /**
          * Client from whom we do all requests.

@@ -50,7 +50,7 @@ namespace Chapp {
 
     std::shared_ptr<Database> Database::instance;
 
-    std::string Database::userInGroupConcat(Chapp::chapp_id_t gid) {
+    std::string Database::userInGroupConcat(chapp_id_t gid) {
         return GID_USER + std::to_string(gid);
     }
 
@@ -62,7 +62,7 @@ namespace Chapp {
         return std::to_string(queryRes.get().as_integer());
     }
 
-    int Database::addGroup(Chapp::GroupType type, std::string name, std::string hash) {
+    int Database::addGroup(GroupType type, std::string name, std::string hash) {
 
         auto newGroupId = incrementNowId(GROUP);
         client.hset(GID_NAME, newGroupId, name);
@@ -72,46 +72,46 @@ namespace Chapp {
         return stoi(newGroupId);
     }
 
-    std::tuple<Chapp::GroupType, std::string, std::string> Database::getGroupInfoById(Chapp::chapp_id_t gid) {
+    std::tuple<GroupType, std::string, std::string> Database::getGroupInfoById(chapp_id_t gid) {
         std::string idAsString = std::to_string(gid);
         auto nameRequest = client.hget(GID_NAME, idAsString);
         auto hashRequest = client.hget(GID_HASH, idAsString);
         auto typeRequest = client.hget(GID_TYPE, idAsString);
         client.sync_commit();
-        return std::tuple<Chapp::GroupType, std::string, std::string>(
-                Chapp::CastToEnum<Chapp::GroupType>(stoi(typeRequest.get().as_string())),
+        return std::tuple<GroupType, std::string, std::string>(
+                CastToEnum<GroupType>(stoi(typeRequest.get().as_string())),
                 nameRequest.get().as_string(),
                 hashRequest.get().as_string()
         );
     }
 
-    std::map<int, std::pair<std::string, Chapp::GroupType>> Database::getListOfGroups() {
+    std::map<int, std::pair<std::string, GroupType>> Database::getListOfGroups() {
 
         std::future<cpp_redis::reply> queryResNames = client.hgetall("gid-name");
         client.sync_commit();
 
         auto parsedResponseNames = queryResNames.get().as_array();
 
-        std::map<int, std::pair<std::string, Chapp::GroupType>> result = {};
+        std::map<int, std::pair<std::string, GroupType>> result = {};
 
         for (auto iter = parsedResponseNames.begin(); iter != parsedResponseNames.end(); iter++) {
             auto key = stoi(iter->as_string());
             auto typeRequest = client.hget(GID_TYPE, iter->as_string());
             client.sync_commit();
-            Chapp::GroupType type = Chapp::CastToEnum<Chapp::GroupType>(stoi(typeRequest.get().as_string()));
+            GroupType type = CastToEnum<GroupType>(stoi(typeRequest.get().as_string()));
 
             if (++iter == parsedResponseNames.end()) break;
 
             auto value = iter->as_string();
-            result.insert(std::pair<int, std::pair<std::string, Chapp::GroupType>>(key,
-                                                                                   std::pair<std::string, Chapp::GroupType>(
+            result.insert(std::pair<int, std::pair<std::string, GroupType>>(key,
+                                                                                   std::pair<std::string, GroupType>(
                                                                                            value, type)));
         }
         return result;
 
     }
 
-    void Database::deleteGroup(Chapp::chapp_id_t gid) {
+    void Database::deleteGroup(chapp_id_t gid) {
 
         std::vector<std::string> query = {std::to_string(gid)};
         client.hdel(GID_NAME, query);
@@ -129,42 +129,42 @@ namespace Chapp {
         return stoi(newUserId);
     }
 
-    std::string Database::getUserNameById(Chapp::chapp_id_t uid) {
+    std::string Database::getUserNameById(chapp_id_t uid) {
         auto nowUserName = client.hget(UID_UNAME, std::to_string(uid));
         client.sync_commit();
         return nowUserName.get().as_string();
     }
 
-    void Database::deleteUser(Chapp::chapp_id_t uid) {
+    void Database::deleteUser(chapp_id_t uid) {
 
         client.hdel(USERS, {std::to_string(uid)});
         client.sync_commit();
 
     }
 
-    void Database::addUserToGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid) {
+    void Database::addUserToGroup(chapp_id_t uid, chapp_id_t gid) {
 
         client.sadd(userInGroupConcat(gid), {std::to_string(uid)});
         client.sync_commit();
 
     }
 
-    void Database::removeUserFromGroup(Chapp::chapp_id_t uid, Chapp::chapp_id_t gid) {
+    void Database::removeUserFromGroup(chapp_id_t uid, chapp_id_t gid) {
 
         client.srem(userInGroupConcat(gid), {std::to_string(uid)});
         client.sync_commit();
 
     }
 
-    std::map<Chapp::chapp_id_t, std::string> Database::getUsersInGroup(Chapp::chapp_id_t gid) {
+    std::map<chapp_id_t, std::string> Database::getUsersInGroup(chapp_id_t gid) {
 
         auto queryRes = client.smembers(userInGroupConcat(gid));
         client.sync_commit();
         auto parsedResponse = queryRes.get().as_array();
-        std::map<Chapp::chapp_id_t, std::string> members;
+        std::map<chapp_id_t, std::string> members;
         for (auto iter = parsedResponse.begin(); iter != parsedResponse.end(); ++iter) {
             auto uid = stoi(iter->as_string());
-            members.insert(std::pair<Chapp::chapp_id_t, std::string>(uid, getUserNameById(uid)));
+            members.insert(std::pair<chapp_id_t, std::string>(uid, getUserNameById(uid)));
         }
         return members;
 
