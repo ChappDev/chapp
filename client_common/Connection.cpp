@@ -32,8 +32,12 @@ void Connection::read()
 	{
 		QByteArray response = readAll();
 		queue.handleResponse(response);
-		//qDebug() << readAll();
 	}
+    if(queue.isEmpty()){
+        QByteArray* byteArray = new QByteArray();
+        byteArray = queue.makeRequest(*byteArray);
+        write(*byteArray);
+    }
 }
 
 void Connection::onConnected()

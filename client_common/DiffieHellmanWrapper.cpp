@@ -25,6 +25,11 @@ DiffieHellmanWrapper::DiffieHellmanWrapper() {
     mpz_pow_ui(max_value.get_mpz_t(),lower_base.get_mpz_t(),50);
     setClientSecret(min_value,max_value);
 }
+std::string DiffieHellmanWrapper::getClientsSecret() {
+    mpz_class clientsByGroup;
+    mpz_powm(clientsByGroup.get_mpz_t(),group.get_mpz_t(),client_secret.get_mpz_t(),prime.get_mpz_t());
+    return clientsByGroup.get_str(10);
+}
 /**
  * get random number, seeds by time and adding
  * @param from

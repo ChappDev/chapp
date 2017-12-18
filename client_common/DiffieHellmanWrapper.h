@@ -17,6 +17,7 @@ private:
 public:
     static DiffieHellmanWrapper& getInstance();
     ~DiffieHellmanWrapper();
+    std::string getClientsSecret();
     void setServerExp(mpz_class server_exp);
     void calcSharedSecret();
     void setPrimeNumber(mpz_class prime);

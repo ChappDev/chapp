@@ -6,16 +6,16 @@
 #include <QDataStream>
 #include "DiffieHellmanInit.h"
 #include "DiffieHellmanWrapper.h"
+#include "RequestQueue.h"
 
 /**
  * sends group of clients secret pow
  * @param block
  * @return
  */
-QByteArray* DiffieHellmanInit::req(QByteArray* block) {
-    block->clear();
-    block->append("test");
-    return block;
+QByteArray* DiffieHellmanInit::req(QByteArray& block, RequestQueue& queue) {
+    block.clear();
+    return &block;
 }
 /**
  * reads data from server (prime number)
@@ -23,11 +23,12 @@ QByteArray* DiffieHellmanInit::req(QByteArray* block) {
  * @param queue
  * @return
  */
-bool DiffieHellmanInit::res(QByteArray& block, QQueue<Command*> *queue) {
+bool DiffieHellmanInit::res(QByteArray& block, RequestQueue& queue) {
     std::string prime = block.toStdString();
     DiffieHellmanWrapper wrapper = DiffieHellmanWrapper::getInstance();
     mpz_class primeMpz;
     primeMpz = prime;
     wrapper.setPrimeNumber(primeMpz);
-    return false;
+    queue.addCommandToQueue(RequestQueue::Cmd::calcSharedKey);
+    return true;
 }

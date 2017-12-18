@@ -7,11 +7,12 @@
 
 
 #include <QByteArray>
+#include "RequestQueue.h"
 
 class Command {
 public:
-    virtual QByteArray* req(QByteArray* block);
-    virtual bool res(QByteArray& block, QQueue<Command*>* queue);
+    virtual QByteArray* req(QByteArray& block, RequestQueue& queue);
+    virtual bool res(QByteArray& block, RequestQueue& queue);
 };
 
 

@@ -8,8 +8,7 @@
 
 #include <QByteArray>
 #include <QQueue>
-#include "Command.h"
-
+class Command;
 class RequestQueue {
 
 private:
@@ -32,7 +31,7 @@ public:
      * @param cmd
      * @param queue
      */
-    QByteArray* makeRequest(RequestQueue::Cmd cmd, QByteArray* block);
+    QByteArray* makeRequest(QByteArray& block);
     /**
      * handle response by first command in queue
      * @param queue
@@ -40,6 +39,7 @@ public:
      */
     void handleResponse(QByteArray& fromResponse);
     void addCommandToQueue(RequestQueue::Cmd cmd);
+    bool isEmpty();
 
 };
 

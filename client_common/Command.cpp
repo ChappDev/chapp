@@ -3,9 +3,9 @@
 //
 
 #include "Command.h"
-QByteArray* Command::req(QByteArray *block) {
-    return block;
+QByteArray* Command::req(QByteArray& block, RequestQueue& queue) {
+    return &block;
 }
-bool Command::res(QByteArray& block, QQueue<Command *> *queue) {
+bool Command::res(QByteArray& block, RequestQueue& queue) {
     return false;
 }

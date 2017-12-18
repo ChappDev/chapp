@@ -5,6 +5,8 @@
 #include "RequestQueue.h"
 #include "Command.h"
 #include "DiffieHellmanInit.h"
+#include "DiffieHellmanCalcSharedKey.h"
+class Command;
 void RequestQueue::addCommandToQueue(RequestQueue::Cmd cmd) {
     Command *command = nullptr;
     switch (cmd) {
@@ -19,28 +21,19 @@ void RequestQueue::addCommandToQueue(RequestQueue::Cmd cmd) {
     }
     queueOfRequests->enqueue(command);
 }
-QByteArray* RequestQueue::makeRequest(RequestQueue::Cmd cmd, QByteArray* block) {
-    QByteArray* toResponse = nullptr;
+QByteArray* RequestQueue::makeRequest(QByteArray& block) {
     Command* command = nullptr;
-    switch(cmd){
-        case initDiffieHellman:
-            command = new DiffieHellmanInit();
-            toResponse = command->req(block);
-            command = new DiffieHellmanInit();
-            queueOfRequests->enqueue(command);
-            break;
-        case calcSharedKey:
-            command = new DiffieHellmanInit();
-            toResponse = command->req(block);
-            queueOfRequests->enqueue(command);
-            break;
+    if(!queueOfRequests->isEmpty()){
+        command = queueOfRequests->dequeue();
+        block = *command->req(block,*this);
     }
-    return toResponse;
+
+    return &block;
 }
 void RequestQueue::handleResponse(QByteArray& fromResponse ) {
     if(!queueOfRequests->isEmpty()){
         Command* command = queueOfRequests->dequeue();
-        command->res(fromResponse,queueOfRequests);
+        command->res(fromResponse,*this);
     }
 }
 RequestQueue& RequestQueue::getInstance(){
@@ -49,4 +42,7 @@ RequestQueue& RequestQueue::getInstance(){
         instance = new RequestQueue();
     }
     return *instance;
+}
+bool RequestQueue::isEmpty() {
+    return queueOfRequests->isEmpty();
 }

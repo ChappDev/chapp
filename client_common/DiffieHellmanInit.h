@@ -7,12 +7,13 @@
 
 
 #include "Command.h"
+#include "RequestQueue.h"
 
 class DiffieHellmanInit : public Command {
 public:
-    DiffieHellmanInit() = default;
-    QByteArray* req(QByteArray* block);
-    bool res(QByteArray& array, QQueue<Command*>* queue);
+    explicit DiffieHellmanInit() = default;
+    QByteArray* req(QByteArray& block, RequestQueue& queue);
+    bool res(QByteArray& array, RequestQueue& queue);
 };
 
 
