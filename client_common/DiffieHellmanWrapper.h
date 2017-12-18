@@ -18,12 +18,12 @@ private:
     int lower_bound;
     std::string getHash();
 public:
-    static DiffieHellmanWrapper& getInstance();
+    static DiffieHellmanWrapper* getInstance();
     ~DiffieHellmanWrapper();
     std::string getClientsSecret();
-    void setServerExp(mpz_class server_exp);
+    void setServerExp(mpz_class& server_exp);
     void calcSharedSecret();
-    void setPrimeNumber(mpz_class prime);
+    void setPrimeNumber(mpz_class& prime);
     void setClientSecret(mpz_class from, mpz_class to);
 
 };

@@ -25,10 +25,10 @@ QByteArray* DiffieHellmanInit::req(QByteArray& block, RequestQueue& queue) {
  */
 bool DiffieHellmanInit::res(QByteArray& block, RequestQueue& queue) {
     std::string prime = block.toStdString();
-    DiffieHellmanWrapper wrapper = DiffieHellmanWrapper::getInstance();
+    DiffieHellmanWrapper* wrapper = DiffieHellmanWrapper::getInstance();
     mpz_class primeMpz;
     primeMpz = prime;
-    wrapper.setPrimeNumber(primeMpz);
+    wrapper->setPrimeNumber(primeMpz);
     queue.addCommandToQueue(RequestQueue::Cmd::calcSharedKey);
     return true;
 }

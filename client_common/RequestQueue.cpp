@@ -14,7 +14,7 @@ void RequestQueue::addCommandToQueue(RequestQueue::Cmd cmd) {
             command = new DiffieHellmanInit();
             break;
         case calcSharedKey:
-            command = new DiffieHellmanInit();
+            command = new DiffieHellmanCalcSharedKey();
             break;
         default:
             command = new DiffieHellmanInit();

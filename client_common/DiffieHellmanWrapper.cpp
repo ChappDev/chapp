@@ -5,12 +5,12 @@
 #include <iostream>
 #include "DiffieHellmanWrapper.h"
 #include <openssl/sha.h>
-DiffieHellmanWrapper& DiffieHellmanWrapper::getInstance() {
+DiffieHellmanWrapper* DiffieHellmanWrapper::getInstance() {
     static DiffieHellmanWrapper* instance;
     if(instance == nullptr){
         instance = new DiffieHellmanWrapper();
     }
-    return *instance;
+    return instance;
 }
 DiffieHellmanWrapper::~DiffieHellmanWrapper() = default;
 /**
@@ -46,11 +46,11 @@ void DiffieHellmanWrapper::setClientSecret(mpz_class from, mpz_class to) {
     }
     std::cout << client_secret.get_mpz_t() << "\n";
 }
-void DiffieHellmanWrapper::setServerExp(mpz_class server_exp) {
+void DiffieHellmanWrapper::setServerExp(mpz_class& server_exp) {
     server_exp = server_exp;
 }
-void DiffieHellmanWrapper::setPrimeNumber(mpz_class prime) {
-    prime = prime;
+void DiffieHellmanWrapper::setPrimeNumber(mpz_class& setPrime) {
+    prime = setPrime;
 }
 /**
  * calcs pow by module of second step of DH algorithm
