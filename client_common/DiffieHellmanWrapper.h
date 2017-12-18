@@ -7,13 +7,16 @@
 
 
 #include <gmpxx.h>
+#include "AesEncoder.h"
 
 class DiffieHellmanWrapper {
     mpz_class client_secret, server_exp, shared_secret, prime, group;
+    friend AesEncoder;
 private:
     DiffieHellmanWrapper();
     std::string sha256(std::string line);
     int lower_bound;
+    std::string getHash();
 public:
     static DiffieHellmanWrapper& getInstance();
     ~DiffieHellmanWrapper();
@@ -22,7 +25,6 @@ public:
     void calcSharedSecret();
     void setPrimeNumber(mpz_class prime);
     void setClientSecret(mpz_class from, mpz_class to);
-    std::string getHash();
 
 };
 
