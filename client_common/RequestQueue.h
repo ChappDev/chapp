@@ -10,30 +10,36 @@
 #include <QQueue>
 #include "Command.h"
 
-class RequestCmd {
+class RequestQueue {
 
 private:
-    RequestCmd() = default;
-
+    RequestQueue(){
+        queueOfRequests = new QQueue<Command*>();
+    };
+    QQueue<Command*>* queueOfRequests;
 public:
     enum Cmd{
         initDiffieHellman,
+        calcSharedKey
     };
-    static RequestCmd* getInstance();
+    static RequestQueue& getInstance();
 
-    ~RequestCmd(){}
+    ~RequestQueue(){
+        delete queueOfRequests;
+    }
     /**
      * making request and setting cmd to the queue
      * @param cmd
      * @param queue
      */
-    QByteArray* makeRequest(RequestCmd::Cmd cmd, QQueue<Command*> *queue,QByteArray* block);
+    QByteArray* makeRequest(RequestQueue::Cmd cmd, QByteArray* block);
     /**
      * handle response by first command in queue
      * @param queue
      * todo:make templates
      */
-    void handleResponse(QQueue<Command*>* queue, QByteArray& fromResponse);
+    void handleResponse(QByteArray& fromResponse);
+    void addCommandToQueue(RequestQueue::Cmd cmd);
 
 };
 

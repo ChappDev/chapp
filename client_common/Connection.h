@@ -11,6 +11,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QTimerEvent>
+#include "RequestQueue.h"
 
 class Connection : public QTcpSocket
 {
@@ -18,7 +19,7 @@ Q_OBJECT
 public:
 	
 	explicit Connection(QObject *parent = 0);
-	
+	~Connection();
 	bool connect();
 	
 	void sendMessage(const QString &message);

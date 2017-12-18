@@ -11,7 +11,7 @@
 class Command {
 public:
     virtual QByteArray* req(QByteArray* block);
-    virtual bool res(QByteArray& array, QQueue<Command*>* queue);
+    virtual bool res(QByteArray& block, QQueue<Command*>* queue);
 };
 
 

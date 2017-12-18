@@ -8,9 +8,9 @@
 
 #include "Command.h"
 
-class DiffieHellmanCmd : public Command {
+class DiffieHellmanInit : public Command {
 public:
-    DiffieHellmanCmd() = default;
+    DiffieHellmanInit() = default;
     QByteArray* req(QByteArray* block);
     bool res(QByteArray& array, QQueue<Command*>* queue);
 };

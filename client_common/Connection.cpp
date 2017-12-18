@@ -3,6 +3,7 @@
 //
 
 #include "Connection.h"
+#include "DiffieHellmanWrapper.h"
 
 static const int PongTimeout = 60 * 1;
 
@@ -13,19 +14,25 @@ Connection::Connection(QObject *parent) : QTcpSocket(parent)
 	
 	transferTimerId = 0;
 	pingTimer.setInterval(PingInterval);
-	
+
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(read()));
 	QObject::connect(this, SIGNAL(connected()), this, SLOT(onConnected()));
 	QObject::connect(this, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 	QObject::connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
+	DiffieHellmanWrapper::getInstance();
+	RequestQueue::getInstance().addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 }
-
+Connection::~Connection(){
+}
 //Наивная реализация
 void Connection::read()
 {
+	auto queue = RequestQueue::getInstance();
 	while (bytesAvailable() > 0)
 	{
-		qDebug() << readAll();
+		QByteArray response = readAll();
+		queue.handleResponse(response);
+		//qDebug() << readAll();
 	}
 }
 
