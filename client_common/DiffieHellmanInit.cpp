@@ -26,6 +26,7 @@ QByteArray* DiffieHellmanInit::req(QByteArray& block, RequestQueue& queue) {
 bool DiffieHellmanInit::res(QByteArray& block, RequestQueue& queue) {
     std::string prime = block.toStdString();
     DiffieHellmanWrapper* wrapper = DiffieHellmanWrapper::getInstance();
+    wrapper->checkStringToMpz(prime);
     mpz_class primeMpz;
     primeMpz = prime;
     wrapper->setPrimeNumber(primeMpz);

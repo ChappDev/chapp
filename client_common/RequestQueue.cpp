@@ -36,12 +36,12 @@ void RequestQueue::handleResponse(QByteArray& fromResponse ) {
         command->res(fromResponse,*this);
     }
 }
-RequestQueue& RequestQueue::getInstance(){
+RequestQueue* RequestQueue::getInstance(){
     static RequestQueue* instance;
     if(instance == nullptr){
         instance = new RequestQueue();
     }
-    return *instance;
+    return instance;
 }
 bool RequestQueue::isEmpty() {
     return queueOfRequests->isEmpty();

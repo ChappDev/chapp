@@ -21,7 +21,7 @@ public:
         initDiffieHellman,
         calcSharedKey
     };
-    static RequestQueue& getInstance();
+    static RequestQueue* getInstance();
 
     ~RequestQueue(){
         delete queueOfRequests;

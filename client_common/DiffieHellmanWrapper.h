@@ -25,6 +25,7 @@ public:
     void calcSharedSecret();
     void setPrimeNumber(mpz_class& prime);
     void setClientSecret(mpz_class from, mpz_class to);
+    void checkStringToMpz(std::string toMpz);
 
 };
 

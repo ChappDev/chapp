@@ -20,7 +20,7 @@ Connection::Connection(QObject *parent) : QTcpSocket(parent)
 	QObject::connect(this, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 	QObject::connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
 	DiffieHellmanWrapper::getInstance();
-	RequestQueue::getInstance().addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
+	RequestQueue::getInstance()->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 }
 Connection::~Connection(){
 }
@@ -31,11 +31,11 @@ void Connection::read()
 	while (bytesAvailable() > 0)
 	{
 		QByteArray response = readAll();
-		queue.handleResponse(response);
+		queue->handleResponse(response);
 	}
-    if(!queue.isEmpty()){
+    if(!queue->isEmpty()){
         QByteArray* byteArray = new QByteArray();
-        byteArray = queue.makeRequest(*byteArray);
+        byteArray = queue->makeRequest(*byteArray);
         write(*byteArray);
     }
 }
