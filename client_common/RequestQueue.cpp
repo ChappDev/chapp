@@ -27,13 +27,19 @@ QByteArray* RequestQueue::makeRequest(QByteArray& block) {
         command = queueOfRequests->dequeue();
         block = *command->req(block,*this);
     }
-
+    if(command) {
+        delete command;
+    }
     return &block;
 }
 void RequestQueue::handleResponse(QByteArray& fromResponse ) {
+    Command* command = nullptr;
     if(!queueOfRequests->isEmpty()){
-        Command* command = queueOfRequests->dequeue();
+        command = queueOfRequests->dequeue();
         command->res(fromResponse,*this);
+    }
+    if(command) {
+        delete command;
     }
 }
 RequestQueue* RequestQueue::getInstance(){

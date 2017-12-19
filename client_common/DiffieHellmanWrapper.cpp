@@ -58,6 +58,7 @@ void DiffieHellmanWrapper::setPrimeNumber(mpz_class& setPrime) {
 void DiffieHellmanWrapper::calcSharedSecret() {
     mpz_powm(shared_secret.get_mpz_t(),server_exp.get_mpz_t(),client_secret.get_mpz_t(),prime.get_mpz_t());
     std::cout << shared_secret.get_mpz_t() << "\n";
+    std::cout << "\n" <<  getHash() << "\n";
 }
 std::string DiffieHellmanWrapper::sha256(std::string line) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
