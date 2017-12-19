@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON) #Включаем поиск в текущей директории
 set(CMAKE_AUTOMOC ON) #Включаем автосоздание моков, когда они нужны
-set(CMAKE_PREFIX_PATH /Users/alex/Documents/frameworks/Qt/5.9.2/clang_64/)
 #Ищем нужные в проекте либы
 find_package(Qt5Core)
 find_package(Qt5Network)
