@@ -80,6 +80,17 @@ std::string DiffieHellmanWrapper::sha256(std::string line) {
 std::string DiffieHellmanWrapper::getHash() {
     return sha256(shared_secret.get_str(10));
 }
+std::string DiffieHellmanWrapper::getIV() {
+    unsigned long ivSeed = 1L;
+    std::string hash = getHash();
+    for(int i =0;i<15;i++){
+        ivSeed *= hash[i]*ivSeed;
+    }
+    gmp_randclass randseed(gmp_randinit_default);
+    randseed.seed(ivSeed);
+    mpz_class iv_secr = randseed.get_z_bits(256);
+    return iv_secr.get_str(10);
+}
 void DiffieHellmanWrapper::checkStringToMpz(std::string toMpz) {
     std::for_each(toMpz.begin(),toMpz.end(),[](char c){
         if(!isdigit(c)){

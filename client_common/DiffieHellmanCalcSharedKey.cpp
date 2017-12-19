@@ -27,5 +27,6 @@ bool DiffieHellmanCalcSharedKey::res(QByteArray& block, RequestQueue& queue) {
     secretMpz = servers_secret;
     wrapper->setServerExp(secretMpz);
     wrapper->calcSharedSecret();
+    std::string blockStr = AesEncoder::encrypt(wrapper,"test");
     return true;
 }

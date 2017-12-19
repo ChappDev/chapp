@@ -8,10 +8,10 @@
 
 #include <gmpxx.h>
 #include "AesEncoder.h"
-
+class AesEncoder;
 class DiffieHellmanWrapper {
     mpz_class client_secret, server_exp, shared_secret, prime, group;
-    friend AesEncoder;
+    friend class AesEncoder;
 private:
     DiffieHellmanWrapper();
     std::string sha256(std::string line);
@@ -26,6 +26,7 @@ public:
     void setPrimeNumber(mpz_class& prime);
     void setClientSecret(mpz_class from, mpz_class to);
     void checkStringToMpz(std::string toMpz);
+    std::string getIV();
 
 };
 
