@@ -7,19 +7,6 @@
 #include <openssl/aes.h>
 #include "AesEncoder.h"
 #include <openssl/aes.h>
-static void hex_print(const void* pv, size_t len)
-{
-    const unsigned char * p = (const unsigned char*)pv;
-    if (NULL == pv)
-        printf("NULL");
-    else
-    {
-        size_t i = 0;
-        for (; i<len;++i)
-            printf("%02X ", *p++);
-    }
-    printf("\n");
-}
 std::string AesEncoder::encrypt(DiffieHellmanWrapper* wrapper, std::string message) {
     gmp_randclass randseed(gmp_randinit_default);
     unsigned char aes_input[message.size()];
@@ -46,7 +33,7 @@ std::string AesEncoder::encrypt(DiffieHellmanWrapper* wrapper, std::string messa
     AES_set_encrypt_key(aes_key, 256, &enc_key);
     AES_cbc_encrypt(aes_input, enc_out, message.size(), &enc_key, iv, AES_ENCRYPT);
     std::string encrypted_msg;
-    for(int i=0;i<message.size();i++){
+    for(int i=0;i<strlen((char*)enc_out);i++){
         encrypted_msg.push_back(enc_out[i]);
     }
     return encrypted_msg;
