@@ -23,7 +23,7 @@ void Server::start(const QHostAddress &address, quint16 port)
     connect(this, &Server::acceptError, this, &Server::slotNewConnection);
     if (!this->listen(address, port))
     {
-        qDebug() << "Server is nor working!";
+        qDebug() << "Server is not working!";
     }
     else
     {
@@ -55,36 +55,49 @@ void Server::sendMessageToGroup() //Пока ничего не делает, т.
 /// slotNewConnection -- handles new connections
 void Server::slotNewConnection()
 {
-    QTcpSocket *client = nextPendingConnection();
-    clients.insert(client);
-    client->write("Hello, I'am a Chapp server\n");
+    QTcpSocket* clientSocket = nextPendingConnection();
+    Client* client = new Client();
+    clients.insert(clientSocket,client);
+    RequestQueue* queue = client->queueOfRequests;
+    queue->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
+    sendMsg(clientSocket);
+    qDebug() << "New client : " << clientSocket->peerAddress().toString();
 
-    qDebug() << "New client : " << client->peerAddress().toString();
-
-    connect(client, &QTcpSocket::readyRead, this, &Server::slotServerRead);
-    connect(client, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
+    connect(clientSocket, &QTcpSocket::readyRead, this, &Server::slotServerRead);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
     sendMessageToGroup();
+}
+void Server::sendMsg(QTcpSocket* socket) {
+    RequestQueue* queue = clients[socket]->queueOfRequests;
+    QByteArray* sendString = new QByteArray();
+    sendString = queue->makeRequest(*sendString);
+    socket->write(*sendString);
+    //todo: delete this on client
+    delete sendString;
 }
 /// slotServerRead -- reading data from the socket
 void Server::slotServerRead() //Читаем информацию из сокета
 {
     auto *client = (QTcpSocket*)sender();
-
+    auto queue = clients[client]->queueOfRequests;
     while(client->bytesAvailable() > 0)
         // Выбрав формат передачи данных мы будем ждать
         // определенное кол-во байт
         // и можно будет принимать QByteArray целиком
     {
-        QString readString = client->readAll();
-        QByteArray array;
-        array.append(readString);
-        std::cout << "Client says : " << array.toStdString(); //Выводим в лог
-        std::string str = array.toStdString();
+        QByteArray readString = client->readAll();
+        std::cout << "Client says : " << readString.toStdString(); //Выводим в лог
 
-        if (str == "end\r\n")
+        if (readString == "end\r\n")
             client->close();
 
-        client->write("Answer\n");
+           queue->handleResponse(readString);
+    }
+    if(!queue->isEmpty()){
+        QByteArray* byteArray = new QByteArray();
+        byteArray = queue->makeRequest(*byteArray);
+        client->write(*byteArray);
+        delete byteArray;
     }
 }
 
@@ -102,7 +115,7 @@ void Server::slotClientDisconnected()
 
 void Server::stop()
 {
-    foreach(QTcpSocket* val, clients)
+    foreach(QTcpSocket* val, clients.keys())
         {
             val->close();
         }

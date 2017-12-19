@@ -8,6 +8,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <iostream>
+#include "Client.h"
+
 class AbstractGroup;
 class User;
 class Message;
@@ -22,6 +24,8 @@ public:
     /*! @brief stops the server and close
     *
     */
+    void sendMsg(QTcpSocket* socket);
+
     void stop();
 
     void incomingConnection(qintptr socketDescriptor) override;
@@ -41,7 +45,7 @@ public slots:
 
 private:
 
-    QSet<QTcpSocket*> clients;
+    QMap<QTcpSocket*,Client*> clients;
 };
 
 
