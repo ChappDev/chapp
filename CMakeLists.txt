@@ -6,6 +6,7 @@ project(chapp)
 add_subdirectory(redis)
 add_subdirectory(common)
 add_subdirectory(server)
+add_subdirectory(client_common)
 
 set(SOURCE_FILES test_db.cpp)
 
