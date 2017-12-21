@@ -22,3 +22,5 @@ target_link_libraries(${PROJECT_NAME} Qt5::Core)
 target_link_libraries(${PROJECT_NAME} Qt5::Network)
 target_link_libraries(${PROJECT_NAME} "${GMP_LIBRARY}" "${GMPXX_LIBRARY}")
 target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIR})
