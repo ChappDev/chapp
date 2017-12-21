@@ -12,13 +12,18 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     start(QHostAddress::Any, quint16(port));
 }
 
+/*! @brief starting the server
+///
+/// @param address -- an IP-address that server should listen
+/// @param port -- a port that server should listen
+*/
 void Server::start(const QHostAddress &address, quint16 port)
 {
     connect(this, &Server::newConnection, this, &Server::slotNewConnection);
     connect(this, &Server::acceptError, this, &Server::slotNewConnection);
     if (!this->listen(address, port))
     {
-        qDebug() << "Server is nor working!";
+        qDebug() << "Server is not working!";
     }
     else
     {
@@ -28,11 +33,18 @@ void Server::start(const QHostAddress &address, quint16 port)
     }
 }
 
+/// incomingConnection -- handles incomming connections (before slotNewConnection)
+///
+/// @param socketDescriptor -- the socket's descriptor that should be used
 void Server::incomingConnection(qintptr socketDescriptor) //Можно модифицировать сокет (дескрипторы, IOMode, вот это все)
 {
     emit QTcpServer::incomingConnection(socketDescriptor);
 }
 
+/// sendMessageToGroup -- sending messages to groups
+///
+/// @param message -- message, obviously
+/// @param address -- a group that should receive message
 void Server::sendMessageToGroup() //Пока ничего не делает, т.к. нет сериализации групп и вообще всего этого
 {
     //QSet<User> users;
@@ -40,37 +52,52 @@ void Server::sendMessageToGroup() //Пока ничего не делает, т.
     //Отсылаем им сообщение
 }
 
+/// slotNewConnection -- handles new connections
 void Server::slotNewConnection()
 {
-    QTcpSocket *client = nextPendingConnection();
-    clients.insert(client);
-    client->write("Hello, I'am a Chapp server\n");
+    QTcpSocket* clientSocket = nextPendingConnection();
+    Client* client = new Client();
+    clients.insert(clientSocket,client);
+    RequestQueue* queue = client->queueOfRequests;
+    queue->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
+    sendMsg(clientSocket);
+    qDebug() << "New client : " << clientSocket->peerAddress().toString();
 
-    qDebug() << "New client : " << client->peerAddress().toString();
-
-    connect(client, &QTcpSocket::readyRead, this, &Server::slotServerRead);
-    connect(client, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
+    connect(clientSocket, &QTcpSocket::readyRead, this, &Server::slotServerRead);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
     sendMessageToGroup();
 }
-
+void Server::sendMsg(QTcpSocket* socket) {
+    RequestQueue* queue = clients[socket]->queueOfRequests;
+    QByteArray* sendString = new QByteArray();
+    sendString = queue->makeRequest(*sendString);
+    socket->write(*sendString);
+    //todo: delete this on client
+    delete sendString;
+}
+/// slotServerRead -- reading data from the socket
 void Server::slotServerRead() //Читаем информацию из сокета
 {
     auto *client = (QTcpSocket*)sender();
-
+    auto queue = clients[client]->queueOfRequests;
     while(client->bytesAvailable() > 0)
         // Выбрав формат передачи данных мы будем ждать
         // определенное кол-во байт
         // и можно будет принимать QByteArray целиком
     {
-        QString readString = client->readAll();
-        QByteArray array;
-        array.append(readString);
-        std::cout << "Client says : " << array.toStdString(); //Выводим в лог
-        std::string str = array.toStdString();
-        if (str == "end\r\n")
+        QByteArray readString = client->readAll();
+        std::cout << "Client says : " << readString.toStdString(); //Выводим в лог
+
+        if (readString == "end\r\n")
             client->close();
 
-        client->write("Answer\n");
+           queue->handleResponse(readString);
+    }
+    if(!queue->isEmpty()){
+        QByteArray* byteArray = new QByteArray();
+        byteArray = queue->makeRequest(*byteArray);
+        client->write(*byteArray);
+        delete byteArray;
     }
 }
 
@@ -85,19 +112,12 @@ void Server::slotClientDisconnected()
     }
 }
 
+
 void Server::stop()
 {
-    foreach(QTcpSocket* val, clients)
+    foreach(QTcpSocket* val, clients.keys())
         {
             val->close();
         }
     close();
-    QTcpServer::~QTcpServer();
-
-}
-
-Server::~Server()
-{
-    clients.clear();
-    QTcpServer::~QTcpServer();
 }

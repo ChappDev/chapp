@@ -47,6 +47,7 @@ CMakeLists.txt.user*
 
 .DS_Store
 
+<<<<<<< HEAD
 # From on github/gitignore
 # Covers JetBrains IDEs
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -74,3 +75,6 @@ cmake-build-debug/
 
 ## Another
 dump.rdb
+
+# CMake
+cmake-build-debug/
