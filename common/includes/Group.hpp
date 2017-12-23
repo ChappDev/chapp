@@ -37,7 +37,10 @@ namespace Chapp {
     using std::map;
     using std::vector;
 
-    struct Message;
+    namespace API {
+        class Message;
+    };
+    using Message = API::Message;
 
     class Group {
     public:
@@ -67,7 +70,7 @@ namespace Chapp {
          * @param msg message to send
          * @return Ok on success
          */
-        Error broadcast(chapp_id_t uid, Message msg);
+        Error broadcast(chapp_id_t uid, const Message& msg);
 
         /*!
          * Invite user to group
@@ -97,7 +100,7 @@ namespace Chapp {
          * @return Vector of users in group
          */
         // TODO(stek): Optimize by having cached vector => ret const ref to it?
-        // vector<MiniUser> list_users() const;
+        std::vector<MiniUser> list_users() const;
 
         /*!
          * Create minigroup representing this group
@@ -112,14 +115,14 @@ namespace Chapp {
             };
         };
 
-    private:
         /*!
          * Checks if user is in group already
          * @param uid user id being checked
          * @return true if user is in group already
          */
-        inline bool has_user(chapp_id_t uid);
+        inline bool has_user(chapp_id_t uid) const;
 
+    private:
         /*!
          * Generate hash for this uid, checked later via check_hash
          * @param uid user id

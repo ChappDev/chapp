@@ -20,55 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_COMMON_H
-#define CHAPP_COMMON_COMMON_H
+#ifndef CHAPP_COMMON_API_HANDLER
+#define CHAPP_COMMON_API_HANDLER
+
+#include <chapp.pb.h>
+#include <User.hpp>
 
 namespace Chapp {
-    // User/Group id
-    using chapp_id_t = int;
+
+    class APIHandler {
+
+    public:
+        static API::ReqResp&& handleRequest(User& from, API::ReqResp &req);
+
+    private:
+
+    #define defMethod_thefuck(mtd, x)\
+        static API::ReqResp&& x##mtd(User& from, const API::RQ##mtd &r)
+
+    #define defMethod(mtd) defMethod_thefuck(mtd, )
+
+        defMethod(sendMessage);
+        defMethod(joinGroup);
+        defMethod(leaveGroup);
+        defMethod(inviteUser);
+        defMethod(createGroup);
+        defMethod(listGroups);
+        defMethod(listUsers);
+
+    #undef defMethod
+    #undef defMethod_thefuck
+
+    };
 }
-
-#include "GroupTypes.hpp"
-#include "Phash.hpp"
-
-#include <string>
-
-#include <cinttypes>
-
-namespace Chapp {
-
-    using std::string;
-
-    /*!
-     * @brief Minimal group struct, used in API
-     */
-    struct MiniGroup {
-        chapp_id_t id;     /**< Group id*/
-        string name;    /**< Group name*/
-        GroupType type; /**< Group type*/
-
-        MiniGroup() = delete;
-    };
-
-    /*!
-     * @brief Struct representing "invite" which allows user to join group
-     */
-    struct GroupInvite {
-        Phash hash{};       /**< hash for group:id */
-        chapp_id_t for_uid;  /**< uid for which this invite is made */
-        MiniGroup group;  /**< group for which this invite is made */
-
-        GroupInvite() = delete;
-    };
-
-    namespace API {
-        class Message;
-        class User;
-    }
-
-    using Message = API::Message;
-    using MiniUser = API::User;
-
-} // namespace Chapp
-
-#endif
+#endif // CHAPP_COMMON_API_HANDLER

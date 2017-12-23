@@ -26,6 +26,7 @@
 #include "Group.hpp"
 #include "GroupFactory.hpp"
 #include "UserFactory.hpp"
+#include <chapp.pb.h>
 #include <utility>
 
 namespace Chapp {
@@ -51,10 +52,18 @@ namespace Chapp {
         }
     }
 
-    void User::deliver_message(Message msg) {
+    void User::deliver_message(const Message& msg) {
         // TODO(stek): send to socket
         (void) msg;
     }
+
+    MiniUser User::to_miniuser() const {
+        // TODO(stek): Optimize by having cached version
+        API::User user;
+        user.set_id((google::protobuf::uint32) id);
+        user.set_username(username);
+        return user;
+    };
 
     Error User::invite(chapp_id_t inviter_id, const GroupInvite& invite) {
         auto gid = invite.group.id;

@@ -14,6 +14,8 @@ set(SOURCE_FILES
   Common.cpp
   Util.cpp
   UserFactory.cpp
+  APIHandler.cpp
+  APIUtil.cpp
 
   includes/User.hpp
   includes/Session.hpp
@@ -23,6 +25,9 @@ set(SOURCE_FILES
   includes/Errors.hpp
   includes/Phash.hpp
   includes/Util.hpp
+  includes/GroupTypes.hpp
+  includes/APIHandler.hpp
+  includes/APIUtil.hpp
   )
 
 if(${NO_DATABASE})
@@ -49,10 +54,12 @@ else()
     ${DATABASE_INCLUDES}
     )
 
-  target_link_libraries(chapp_common redis)
+  target_link_libraries(chapp_common PUBLIC redis)
 endif(${NO_DATABASE})
 
 target_include_directories(chapp_common PUBLIC
         ${COMMON_INCLUDES}
         )
+
+target_link_libraries(chapp_common PUBLIC proto)
 

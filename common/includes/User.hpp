@@ -63,7 +63,7 @@ namespace Chapp {
          * Deliver message to user
          * @param msg message to send
          */
-        void deliver_message(Message msg);
+        void deliver_message(const Message &msg);
 
         /*!
          * @brief Invite user to group
@@ -93,13 +93,7 @@ namespace Chapp {
          * Create minigroup representing this group
          * @return
          */
-        MiniUser to_miniuser() const {
-            // TODO(stek): Optimize by having cached version
-            return {
-                    .id = id,
-                    .username = username,
-            };
-        };
+        MiniUser to_miniuser() const;
 
     private:
         /*!

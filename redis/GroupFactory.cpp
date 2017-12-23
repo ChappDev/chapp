@@ -64,10 +64,12 @@ namespace Chapp {
         th_mod.detach();
     }
 
+    // FIXME(stek) Handle non-existent group
     Group *GroupFactory::by_id(chapp_id_t gid) {
         if (groups_by_id.count(gid)) {
             return groups_by_id[gid];
         }
+
         std::tuple<GroupType, std::string, std::string> result = Database::Instance()->getGroupInfoById(gid);
         std::map<chapp_id_t, std::string> users = Database::Instance()->getUsersInGroup(gid);
 

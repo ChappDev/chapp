@@ -20,55 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_COMMON_H
-#define CHAPP_COMMON_COMMON_H
+#include <chapp.pb.h>
+#include <APIUtil.hpp>
+#include <Errors.hpp>
 
-namespace Chapp {
-    // User/Group id
-    using chapp_id_t = int;
-}
+namespace Chapp::API::Util {
+    ReqResp&& ErrorToAPIResp(Error err) {
+        auto resp = API::ReqResp();
+        resp.set_kind(API::ReqResp::resp);
 
-#include "GroupTypes.hpp"
-#include "Phash.hpp"
+        #define convertError_thefuck(err, x)\
+            case Error::x##err: \
+                return MakeAPIError(std::move(resp), 400, "ERR_SRV_" #err)
 
-#include <string>
+        #define convertError(err) convertError_thefuck(err, )
 
-#include <cinttypes>
+        switch (err) {
+            case Error::Ok:
+                resp.set_inline_type(ReqResp::okresp);
+                return std::move(resp);
 
-namespace Chapp {
+            convertError(NotInGroup);
+            convertError(AlreadyInGroup);
+            convertError(AlreadyInvited);
+            convertError(InvalidUserId);
+            convertError(InvalidGroupId);
+            convertError(IncorrectHash);
+        }
 
-    using std::string;
-
-    /*!
-     * @brief Minimal group struct, used in API
-     */
-    struct MiniGroup {
-        chapp_id_t id;     /**< Group id*/
-        string name;    /**< Group name*/
-        GroupType type; /**< Group type*/
-
-        MiniGroup() = delete;
-    };
-
-    /*!
-     * @brief Struct representing "invite" which allows user to join group
-     */
-    struct GroupInvite {
-        Phash hash{};       /**< hash for group:id */
-        chapp_id_t for_uid;  /**< uid for which this invite is made */
-        MiniGroup group;  /**< group for which this invite is made */
-
-        GroupInvite() = delete;
-    };
-
-    namespace API {
-        class Message;
-        class User;
+        #undef convertError
+        #undef convertError_thefuck
     }
-
-    using Message = API::Message;
-    using MiniUser = API::User;
-
-} // namespace Chapp
-
-#endif
+}

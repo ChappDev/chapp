@@ -20,55 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef CHAPP_COMMON_COMMON_H
-#define CHAPP_COMMON_COMMON_H
+#include <chapp.pb.h>
+#include <GroupTypes.hpp>
+#include <Errors.hpp>
+#include <UserFactory.hpp>
 
-namespace Chapp {
-    // User/Group id
-    using chapp_id_t = int;
-}
+// C++1z extension is better than three levels of indentation
 
-#include "GroupTypes.hpp"
-#include "Phash.hpp"
-
-#include <string>
-
-#include <cinttypes>
-
-namespace Chapp {
-
-    using std::string;
-
-    /*!
-     * @brief Minimal group struct, used in API
-     */
-    struct MiniGroup {
-        chapp_id_t id;     /**< Group id*/
-        string name;    /**< Group name*/
-        GroupType type; /**< Group type*/
-
-        MiniGroup() = delete;
-    };
-
-    /*!
-     * @brief Struct representing "invite" which allows user to join group
-     */
-    struct GroupInvite {
-        Phash hash{};       /**< hash for group:id */
-        chapp_id_t for_uid;  /**< uid for which this invite is made */
-        MiniGroup group;  /**< group for which this invite is made */
-
-        GroupInvite() = delete;
-    };
-
-    namespace API {
-        class Message;
-        class User;
+namespace Chapp::API::Util {
+    inline Chapp::GroupType GroupTypeFromAPI(const API::GroupType &gt) {
+        switch (gt) {
+            case API::GroupType::Private:
+                return Chapp::GroupType::Private;
+            case API::GroupType::Public:
+                return Chapp::GroupType::Public;
+            case API::GroupType::Protected:
+                return Chapp::GroupType::Protected;
+        }
     }
 
-    using Message = API::Message;
-    using MiniUser = API::User;
+    template<class Code, class Str = const char *>
+    API::ReqResp &&MakeAPIError(API::ReqResp &&r, Code code, Str str = nullptr) {
+        r.set_inline_type(API::ReqResp::error);
+        auto err = r.MutableExtension(API::RPError::inner);
+        err->set_code(code);
+        if (str) {
+            err->set_description(str);
+        }
+        return std::move(r);
+    }
 
-} // namespace Chapp
-
-#endif
+    API::ReqResp &&ErrorToAPIResp(Error);
+}

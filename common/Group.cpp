@@ -27,6 +27,8 @@
 #include "User.hpp"
 #include "UserFactory.hpp"
 #include <utility>
+#include <algorithm>
+#include <chapp.pb.h>
 
 namespace Chapp {
 
@@ -38,7 +40,11 @@ namespace Chapp {
             , last_activity(Util::get_current_ts())
     {};
 
-    Error Group::broadcast(chapp_id_t  /*uid*/, Message msg) {
+    Error Group::broadcast(chapp_id_t uid, const Message& msg) {
+        if (!has_user(uid)) {
+            return Error::NotInGroup; // uid should be in group
+        }
+
         mark_active();
 
         for (const auto &pair : users_by_id) {
@@ -49,11 +55,11 @@ namespace Chapp {
     }
 
     Error Group::invite(chapp_id_t curr_uid, chapp_id_t new_uid) {
-        mark_active();
-        
         if (!has_user(curr_uid)) {
             return Error::NotInGroup; // curr_uid should be in group
         }
+
+        mark_active();
 
         if (has_user(new_uid)) {
             return Error::AlreadyInGroup; // new_uid already in group
@@ -69,6 +75,10 @@ namespace Chapp {
     }
 
     Error Group::join(chapp_id_t uid, const Phash& hash) {
+        if (has_user(uid)) {
+            return Error::AlreadyInGroup;
+        }
+
         mark_active();
 
         if (!check_hash(uid, hash)) {
@@ -92,7 +102,7 @@ namespace Chapp {
 
     Error Group::leave(chapp_id_t uid) {
         mark_active();
-        
+
         auto it = users_by_id.find(uid);
         if (it == users_by_id.end()) {
             return Error::NotInGroup; // no such user in group
@@ -115,8 +125,20 @@ namespace Chapp {
         return Error::Ok;
     }
 
-    bool Group::has_user(chapp_id_t uid) {
+    bool Group::has_user(chapp_id_t uid) const {
         return users_by_id.find(uid) != users_by_id.end();
+    }
+
+    std::vector<MiniUser> Group::list_users() const {
+        std::vector<MiniUser> result;
+        std::transform(
+                users_by_id.begin(), users_by_id.end(),
+                std::back_inserter(result),
+                [](std::pair<chapp_id_t, User*> pair) -> MiniUser&& {
+                    return std::move(pair.second->to_miniuser());
+                }
+        );
+        return result;
     }
 
     PublicGroup::PublicGroup(chapp_id_t gid, const string& gname, User* creator, Phash ghash)
