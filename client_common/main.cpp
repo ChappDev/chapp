@@ -20,6 +20,5 @@ int main(int argc, char *argv[])
 	
 	myConnection.connectToHost(host, port);
 
-
     return app.exec();
 }

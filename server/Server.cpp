@@ -56,7 +56,7 @@ void Server::sendMessageToGroup() //Пока ничего не делает, т.
 void Server::slotNewConnection()
 {
     QTcpSocket* clientSocket = nextPendingConnection();
-    Client* client = new Client();
+    auto* client = new Client();
     clients.insert(clientSocket,client);
     RequestQueue* queue = client->queueOfRequests;
     queue->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
@@ -67,38 +67,53 @@ void Server::slotNewConnection()
     connect(clientSocket, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
     sendMessageToGroup();
 }
-void Server::sendMsg(QTcpSocket* socket) {
+void Server::sendMsg(QTcpSocket* socket)
+{
     RequestQueue* queue = clients[socket]->queueOfRequests;
-    QByteArray* sendString = new QByteArray();
+    auto* sendString = new QByteArray();
+
     sendString = queue->makeRequest(*sendString);
     socket->write(*sendString);
+
     //todo: delete this on client
     delete sendString;
 }
 /// slotServerRead -- reading data from the socket
-void Server::slotServerRead() //Читаем информацию из сокета
+void Server::slotServerRead() //Читаем информацию из сокета. Здесь же происходит вызов метода Broadcast.
 {
     auto *client = (QTcpSocket*)sender();
     auto queue = clients[client]->queueOfRequests;
+
+    // Выбрав формат передачи данных мы будем ждать
+    // определенное кол-во байт
+    // и можно будет принимать QByteArray целиком
     while(client->bytesAvailable() > 0)
-        // Выбрав формат передачи данных мы будем ждать
-        // определенное кол-во байт
-        // и можно будет принимать QByteArray целиком
     {
         QByteArray readString = client->readAll();
         std::cout << "Client says : " << readString.toStdString(); //Выводим в лог
+        broadcast(readString);
 
         if (readString == "end\r\n")
             client->close();
 
            queue->handleResponse(readString);
     }
-    if(!queue->isEmpty()){
-        QByteArray* byteArray = new QByteArray();
+
+    if(!queue->isEmpty())
+    {
+        auto *byteArray = new QByteArray();
         byteArray = queue->makeRequest(*byteArray);
         client->write(*byteArray);
         delete byteArray;
     }
+}
+
+void Server::broadcast(QByteArray &message)
+{
+    foreach(QTcpSocket *val, clients.keys())
+        {
+            val->write(message);
+        }
 }
 
 void Server::slotClientDisconnected()

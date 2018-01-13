@@ -44,7 +44,7 @@ public slots:
     void slotClientDisconnected();
 
 private:
-
+    void broadcast(QByteArray &message);
     QMap<QTcpSocket*,Client*> clients;
 };
 

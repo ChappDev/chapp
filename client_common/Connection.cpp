@@ -22,7 +22,8 @@ Connection::Connection(QObject *parent) : QTcpSocket(parent)
 	DiffieHellmanWrapper::getInstance();
 	RequestQueue::getInstance()->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 }
-Connection::~Connection(){
+Connection::~Connection()
+{
 }
 //Наивная реализация
 void Connection::read()
