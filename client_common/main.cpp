@@ -12,13 +12,14 @@ int main(int argc, char *argv[])
 
 	QTextStream in(stdin);
 	std::cout << "Введите адрес сервера: ";
-	auto host  = in.readLine();
+	std::string host;
+	getline(std::cin, host);
 
 	std::cout << "Введите порт сервера: ";
 	quint16 port;
 	std::cin >> port;
-	
-	myConnection.connectToHost(host, port);
+
+	myConnection.connectToHost(QString(host.c_str()), port);
 
     return app.exec();
 }

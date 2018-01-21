@@ -127,7 +127,6 @@ void Server::slotClientDisconnected()
     }
 }
 
-
 void Server::stop()
 {
     foreach(QTcpSocket* val, clients.keys())

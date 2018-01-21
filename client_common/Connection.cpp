@@ -22,9 +22,7 @@ Connection::Connection(QObject *parent) : QTcpSocket(parent)
 	DiffieHellmanWrapper::getInstance();
 	RequestQueue::getInstance()->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 }
-Connection::~Connection()
-{
-}
+
 //Наивная реализация
 void Connection::read()
 {
@@ -76,7 +74,8 @@ void Connection::sendMessage(const QString &message)
 {
 	if (message.isEmpty())
 		return;
-	
+
+
 	QByteArray msg = message.toUtf8();
 	write(msg);
 }

@@ -19,7 +19,7 @@ Q_OBJECT
 public:
 	
 	explicit Connection(QObject *parent = 0);
-	~Connection();
+	~Connection() = default;
 	bool connect();
 	
 	void sendMessage(const QString &message);
