@@ -70,17 +70,12 @@ void Server::slotNewConnection()
 }
 void Server::sendMsg(QTcpSocket* socket)
 {
-    QTcpSocket* clientSocket = nextPendingConnection();
-    auto* client = new Client();
-    clients.insert(clientSocket,client);
-    RequestQueue* queue = client->queueOfRequests;
-    queue->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 
-    qDebug() << "New client : " << clientSocket->peerAddress().toString();
-
-    connect(clientSocket, &QTcpSocket::readyRead, this, &Server::slotServerRead);
-    connect(clientSocket, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
-    sendMessageToGroup();
+  RequestQueue* queue = clients[socket]->queueOfRequests;
+  QByteArray* sendString = new QByteArray();
+  sendString = queue->makeRequest(*sendString);
+  socket->write(*sendString);
+  delete sendString;
 }
 /// slotServerRead -- reading data from the socket
 void Server::slotServerRead() //Читаем информацию из сокета
@@ -117,13 +112,15 @@ void Server::slotServerRead() //Читаем информацию из соке�
 
 QByteArray Server::getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
-  QByteArray encrypted =QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+  std::string& encrypt = AesEncoder::encrypt(wrapper,msg);
+  QByteArray encrypted =QByteArray::fromStdString(encrypt);
     return encrypted;
 };
 
 QByteArray Server::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
-  QByteArray decrypted = QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+  std::string& decrypt = AesEncoder::decrypt(wrapper,msg);
+  QByteArray decrypted = QByteArray::fromStdString(decrypt);
   return decrypted;
 };
 void Server::slotClientCredentialsRead() {
@@ -133,17 +130,29 @@ void Server::slotClientCredentialsRead() {
       User* user = clients[client]->user;
       QByteArray decrypted = getDecryptedMessage(clients[client]->wrapper,client->readAll().toStdString());
       std::string data = decrypted.toStdString();
-      (!user->empty() ? user->setName(data): user->setHash(data));
-      if(user->hash != "" && checkUsers(user->name,data)){
+      if(user->empty()){
+        user->setName(data);
+      }
+      else{
+        user->setHash(data);
+      }
+
+      if (user->hash != "" && checkUsers(user->name, data)) {
+        std::cout << "Подключился пользователь: "<<user->name<<"\n";
         disconnect(client, &QTcpSocket::readyRead, this, &Server::slotClientCredentialsRead);
         connect(client, &QTcpSocket::readyRead, this, &Server::slotEncryptedRead);
         user->is_used = true;
-        users.insert(user->name,user);
-        client->write(getEncryptedMessage(clients[client]->wrapper,"1"));
-      }
-      else{
-        client->write(getEncryptedMessage(clients[client]->wrapper,"0"));
-        user->flush();
+        users.insert(user->name, user);
+        client->write(getEncryptedMessage(clients[client]->wrapper, std::string("1")));
+      } else {
+          if(user->hash == "") {
+            client->write(getEncryptedMessage(clients[client]->wrapper, std::string("p")));
+          }
+          else {
+            client->write(getEncryptedMessage(clients[client]->wrapper, std::string("0")));
+            user->flush();
+          }
+
       }
   }
 }
@@ -169,11 +178,11 @@ void Server::slotClientDisconnected()
     user->is_used = false;
   }
   qDebug() << "Someone has disconnected : " << client->peerAddress();
-  client->close();
   if (clients.contains(client))
   {
     clients.erase(clients.find(client));
   }
+  client->close();
 }
 
 void Server::stop()

@@ -6,7 +6,7 @@
 #include "User.h"
 
 void User::setName(std::string &_name) {
-
+  name = _name;
 }
 
 bool User::authenticate(std::string &password) {

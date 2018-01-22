@@ -13,6 +13,7 @@
 #include <QTimerEvent>
 #include "RequestQueue.h"
 #include "DiffieHellmanWrapper.h"
+#include <QSocketNotifier>
 
 class Connection : public QTcpSocket
 {
@@ -20,7 +21,9 @@ Q_OBJECT
 public:
 	
 	explicit Connection(QObject *parent = 0);
-	~Connection();
+	~Connection(){
+		delete pNot;
+	};
 	bool connect();
 	
 	void sendMessage(const QString &message);
@@ -36,19 +39,22 @@ private slots:
 	
 	void read();
 	void encryptedRead();
+	void writeCredentialsRead();
 
 	void onConnected();
 	
 	void onDisconnected();
 	
 	void sendPing();
+  	void onData();
 
 protected:
-	QByteArray getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
-	QByteArray getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
+	QByteArray getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string& msg);
+	QByteArray getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string& msg);
 	void timerEvent(QTimerEvent *timerEvent) override;
 
 private:
+  	QSocketNotifier* pNot;
 	QTimer pingTimer;
 	QTime pongTime;
 	int transferTimerId;
