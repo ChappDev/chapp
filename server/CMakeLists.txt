@@ -13,7 +13,8 @@ find_library(GMPXX_LIBRARY gmpxx)
 find_package(OpenSSL)
 
 
-set(SOURCE_FILES main.cpp Server.cpp Server.hpp Client.cpp Client.h RequestQueue.cpp RequestQueue.h Command.cpp Command.h DiffieHellmanWrapper.cpp DiffieHellmanWrapper.h DiffieHellmanInit.cpp DiffieHellmanInit.h DiffieHellmanCalcSharedKey.cpp DiffieHellmanCalcSharedKey.h AesEncoder.h AesEncoder.cpp User.cpp User.h)
+set(SOURCE_FILES main.cpp AesEncoder.cpp AesEncoder.h Server.cpp Server.hpp Client.cpp Client.h RequestQueue.cpp RequestQueue.h Command.cpp Command.h DiffieHellmanWrapper.cpp DiffieHellmanWrapper.h DiffieHellmanInit.cpp DiffieHellmanInit.h DiffieHellmanCalcSharedKey.cpp DiffieHellmanCalcSharedKey.h)
+
 add_executable(server ${SOURCE_FILES})
 
 #Присоединяем либы к проекту к проекту

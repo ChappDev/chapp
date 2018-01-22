@@ -56,6 +56,7 @@ void Server::sendMessageToGroup() //Пока ничего не делает, т.
 /// slotNewConnection -- handles new connections
 void Server::slotNewConnection()
 {
+<<<<<<< HEAD
   QTcpSocket* clientSocket = nextPendingConnection();
   auto* client = new Client();
   clients.insert(clientSocket,client);
@@ -76,12 +77,46 @@ void Server::sendMsg(QTcpSocket* socket)
   socket->write(*sendString);
   //todo: delete this on client
   delete sendString;
+=======
+    QTcpSocket* clientSocket = nextPendingConnection();
+    auto* client = new Client();
+    clients.insert(clientSocket,client);
+    RequestQueue* queue = client->queueOfRequests;
+    queue->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
+    sendMsg(clientSocket);
+    qDebug() << "New client : " << clientSocket->peerAddress().toString();
+
+    connect(clientSocket, &QTcpSocket::readyRead, this, &Server::slotServerRead);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &Server::slotClientDisconnected);
+    sendMessageToGroup();
+}
+void Server::sendMsg(QTcpSocket* socket)
+{
+    RequestQueue* queue = clients[socket]->queueOfRequests;
+    auto* sendString = new QByteArray();
+    sendString = queue->makeRequest(*sendString);
+    socket->write(*sendString);
+    //todo: delete this on client
+    delete sendString;
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 }
 /// slotServerRead -- reading data from the socket
 void Server::slotServerRead() //Читаем информацию из сокета
 {
+<<<<<<< HEAD
   auto *client = (QTcpSocket*)sender();
   auto queue = clients[client]->queueOfRequests;
+=======
+    auto *client = (QTcpSocket*)sender();
+    auto queue = clients[client]->queueOfRequests;
+
+    // Выбрав формат передачи данных мы будем ждать
+    // определенное кол-во байт
+    // и можно будет принимать QByteArray целиком
+    while(client->bytesAvailable() > 0)
+    {
+        QByteArray readString = client->readAll();
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 
   // Выбрав формат передачи данных мы будем ждать
   // определенное кол-во байт
@@ -106,17 +141,37 @@ void Server::slotServerRead() //Читаем информацию из соке�
       disconnect(client, &QTcpSocket::readyRead, this, &Server::slotServerRead);
       connect(client, &QTcpSocket::readyRead, this, &Server::slotClientCredentialsRead);
     }
+<<<<<<< HEAD
     delete byteArray;
   }
+=======
+    if(!queue->isEmpty())
+    {
+        auto* byteArray = new QByteArray();
+        byteArray = queue->makeRequest(*byteArray);
+        client->write(*byteArray);
+        if(queue->isEmpty())
+        {
+            disconnect(client, &QTcpSocket::readyRead, this, &Server::slotServerRead);
+            connect(client, &QTcpSocket::readyRead, this, &Server::slotEncryptedRead);
+        }
+        delete byteArray;
+    }
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 }
 
 QByteArray Server::getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
+<<<<<<< HEAD
   return QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+=======
+    return QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 };
 
 QByteArray Server::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
+<<<<<<< HEAD
   return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
 };
 void Server::slotClientCredentialsRead() {
@@ -150,6 +205,21 @@ void Server::slotEncryptedRead()
     qDebug() << "Client says : " << decrypted;
     broadcast(decrypted);
   }
+=======
+    return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+};
+
+void Server::slotEncryptedRead()
+{
+    auto *client = (QTcpSocket *) sender();
+    while (client->bytesAvailable() > 0)
+    {
+        QByteArray readString = client->readAll();
+        std::string content = readString.toStdString();
+        qDebug() << "Client says : " << getDecryptedMessage(clients[client]->wrapper, content);
+        broadcast(readString);
+    }
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 }
 
 void Server::slotClientDisconnected()
@@ -177,6 +247,7 @@ void Server::stop()
   close();
 }
 
+<<<<<<< HEAD
 void Server::broadcast(QByteArray &message)
 {
 
@@ -210,3 +281,24 @@ bool Server::checkUsers(std::string &name, std::string &pass) {
   }
   return true;
 }
+=======
+void Server::stop()
+{
+    foreach(QTcpSocket* val, clients.keys())
+        {
+            val->close();
+        }
+    close();
+}
+
+void Server::broadcast(QByteArray &message)
+{
+
+    foreach (QTcpSocket *key, clients.keys())
+        {
+            DiffieHellmanWrapper *wrapper = clients[key]->wrapper;
+            QByteArray msg = getEncryptedMessage(wrapper, message.toStdString());
+            key->write(msg);
+        }
+}
+>>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
