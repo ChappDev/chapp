@@ -8,12 +8,14 @@
 
 #include <QTcpSocket>
 #include "RequestQueue.h"
+#include "User.h"
 
 struct Client {
   Client();
   ~Client();
   RequestQueue* queueOfRequests;
   DiffieHellmanWrapper* wrapper;
+  User* user;
 };
 
 

@@ -6,8 +6,10 @@
 Client::Client() {
     wrapper = new DiffieHellmanWrapper();
     queueOfRequests = new RequestQueue(wrapper);
+    user = new User();
 }
 Client::~Client() {
     delete queueOfRequests;
     delete wrapper;
+    delete user;
 }

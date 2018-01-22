@@ -10,6 +10,7 @@
 #include <iostream>
 #include "Client.h"
 #include "DiffieHellmanWrapper.h"
+#include "AesEncoder.h"
 
 class AbstractGroup;
 class User;
@@ -17,40 +18,44 @@ class Message;
 
 class Server : public QTcpServer
 {
-    Q_OBJECT
-public:
+ Q_OBJECT
+ public:
 
-    explicit Server(QObject *parent = nullptr);
+  explicit Server(QObject *parent = nullptr);
 
-    /*! @brief stops the server and close
-    *
-    */
-    void sendMsg(QTcpSocket* socket);
+  /*! @brief stops the server and close
+  *
+  */
+  void sendMsg(QTcpSocket* socket);
 
-    void stop();
+  void stop();
 
-    void incomingConnection(qintptr socketDescriptor) override;
+  void incomingConnection(qintptr socketDescriptor) override;
 
-    void start(const QHostAddress &address, quint16 port);
+  void start(const QHostAddress &address, quint16 port);
 
-    void sendMessageToGroup();
+  void sendMessageToGroup();
 
-public slots:
+  void broadcast(QByteArray &message);
 
-    void slotNewConnection();
-    void slotServerRead();
+ public slots:
 
+  void slotNewConnection();
+  void slotServerRead();
+  void slotClientCredentialsRead();
   void slotEncryptedRead();
-    /*!@brief slotClientDisconnected handles disconnections
-    *
-    */
-    void slotClientDisconnected();
+  /*!@brief slotClientDisconnected handles disconnections
+  *
+  */
+  void slotClientDisconnected();
  protected:
   QByteArray getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
   QByteArray getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
-private:
+  bool checkUsers(std::string& name, std::string &pass);
+ private:
 
-    QMap<QTcpSocket*,Client*> clients;
+  QMap<QTcpSocket*,Client*> clients;
+  QMap<std::string,User*> users;
 };
 
 
