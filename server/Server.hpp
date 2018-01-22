@@ -10,6 +10,7 @@
 #include <iostream>
 #include "Client.h"
 #include "DiffieHellmanWrapper.h"
+#include "AesEncoder.h"
 
 class AbstractGroup;
 class User;
@@ -34,6 +35,8 @@ public:
     void start(const QHostAddress &address, quint16 port);
 
     void sendMessageToGroup();
+
+    void broadcast(std::string &message);
 
 public slots:
 

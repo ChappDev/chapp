@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 project(server)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_PREFIX_PATH /Users/alex/Documents/frameworks/Qt/5.9.2/clang_64/)
 set(CMAKE_INCLUDE_CURRENT_DIR ON) #Включаем поиск в текущей директории
 set(CMAKE_AUTOMOC ON) #Включаем автосоздание моков, когда они нужны
 
@@ -14,7 +13,7 @@ find_library(GMPXX_LIBRARY gmpxx)
 find_package(OpenSSL)
 
 
-set(SOURCE_FILES main.cpp Server.cpp Server.hpp Client.cpp Client.h RequestQueue.cpp RequestQueue.h Command.cpp Command.h DiffieHellmanWrapper.cpp DiffieHellmanWrapper.h DiffieHellmanInit.cpp DiffieHellmanInit.h DiffieHellmanCalcSharedKey.cpp DiffieHellmanCalcSharedKey.h)
+set(SOURCE_FILES main.cpp AesEncoder.cpp AesEncoder.h Server.cpp Server.hpp Client.cpp Client.h RequestQueue.cpp RequestQueue.h Command.cpp Command.h DiffieHellmanWrapper.cpp DiffieHellmanWrapper.h DiffieHellmanInit.cpp DiffieHellmanInit.h DiffieHellmanCalcSharedKey.cpp DiffieHellmanCalcSharedKey.h)
 add_executable(server ${SOURCE_FILES})
 
 #Присоединяем либы к проекту к проекту
