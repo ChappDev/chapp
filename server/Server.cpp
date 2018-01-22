@@ -136,10 +136,10 @@ void Server::slotClientCredentialsRead() {
         connect(client, &QTcpSocket::readyRead, this, &Server::slotEncryptedRead);
         user->is_used = true;
         users.insert(user->name,user);
-        client->write("1");
+        client->write(getEncryptedMessage(clients[client]->wrapper,"1"));
       }
       else{
-        client->write("0");
+        client->write(getEncryptedMessage(clients[client]->wrapper,"0"));
         user->flush();
       }
   }
