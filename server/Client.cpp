@@ -4,8 +4,10 @@
 
 #include "Client.h"
 Client::Client() {
-    queueOfRequests = new RequestQueue();
+    wrapper = new DiffieHellmanWrapper();
+    queueOfRequests = new RequestQueue(wrapper);
 }
 Client::~Client() {
     delete queueOfRequests;
+    delete wrapper;
 }

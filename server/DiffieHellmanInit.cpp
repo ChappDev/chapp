@@ -15,7 +15,7 @@
  */
 QByteArray* DiffieHellmanInit::req(QByteArray& block, RequestQueue& queue) {
     block.clear();
-    DiffieHellmanWrapper* wrapper = DiffieHellmanWrapper::getInstance();
+    DiffieHellmanWrapper* wrapper = queue.wrapper;
     block = block.fromStdString(wrapper->getPrimeNumber());
     queue.addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
     return &block;
@@ -28,7 +28,7 @@ QByteArray* DiffieHellmanInit::req(QByteArray& block, RequestQueue& queue) {
  */
 bool DiffieHellmanInit::res(QByteArray& block, RequestQueue& queue) {
     std::string clientsExp = block.toStdString();
-    DiffieHellmanWrapper* wrapper = DiffieHellmanWrapper::getInstance();
+    DiffieHellmanWrapper* wrapper = queue.wrapper;
     clientsExp = wrapper->checkStringToMpz(clientsExp);
     mpz_class clientsExpMpz;
     clientsExpMpz = clientsExp;

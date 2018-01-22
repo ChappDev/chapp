@@ -9,6 +9,7 @@
 #include <QTcpSocket>
 #include <iostream>
 #include "Client.h"
+#include "DiffieHellmanWrapper.h"
 
 class AbstractGroup;
 class User;
@@ -38,13 +39,17 @@ public slots:
 
     void slotNewConnection();
     void slotServerRead();
+
+  void slotEncryptedRead();
     /*!@brief slotClientDisconnected handles disconnections
     *
     */
     void slotClientDisconnected();
-
+ protected:
+  QByteArray getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
+  QByteArray getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
 private:
-    void broadcast(QByteArray &message);
+
     QMap<QTcpSocket*,Client*> clients;
 };
 

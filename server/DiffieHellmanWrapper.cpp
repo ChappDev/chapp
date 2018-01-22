@@ -5,14 +5,6 @@
 #include <iostream>
 #include "DiffieHellmanWrapper.h"
 #include <openssl/sha.h>
-
-DiffieHellmanWrapper* DiffieHellmanWrapper::getInstance() {
-    static DiffieHellmanWrapper* instance;
-    if(instance == nullptr){
-        instance = new DiffieHellmanWrapper();
-    }
-    return instance;
-}
 DiffieHellmanWrapper::~DiffieHellmanWrapper() = default;
 /**
  * constructor
@@ -47,7 +39,6 @@ void DiffieHellmanWrapper::setServerSecret(mpz_class from, mpz_class to) {
     if(!__gmpz_cmp_si(server_secret.get_mpz_t(),10000000L)){
         abort();
     }
-    std::cout << server_secret.get_mpz_t() << "\n";
 }
 void DiffieHellmanWrapper::setClientExp(mpz_class &server_exp){
     client_exp = server_exp;
@@ -57,8 +48,6 @@ void DiffieHellmanWrapper::setClientExp(mpz_class &server_exp){
 */
 void DiffieHellmanWrapper::calcSharedSecret() {
     mpz_powm(shared_secret.get_mpz_t(),client_exp.get_mpz_t(),server_secret.get_mpz_t(),prime.get_mpz_t());
-    std::cout << "\n" <<  shared_secret.get_mpz_t() << "\n";
-    std::cout << "\n" <<  getHash() << "\n";
 }
 std::string DiffieHellmanWrapper::sha256(std::string line) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -84,11 +73,22 @@ std::string DiffieHellmanWrapper::checkStringToMpz(std::string toMpz) {
     std::string sanitazedToMpz;
     for(int i =0;i < toMpz.size();i++) {
         if(isdigit(toMpz[i])){
-           sanitazedToMpz.push_back(toMpz[i]);
+            sanitazedToMpz.push_back(toMpz[i]);
         }
     }
     return sanitazedToMpz;
 }
 std::string DiffieHellmanWrapper::getPrimeNumber() {
     return prime.get_str(10);
+}
+std::string DiffieHellmanWrapper::getIV() {
+    unsigned long ivSeed = 1L;
+    std::string hash = getHash();
+    for(int i =0;i<15;i++){
+        ivSeed *= hash[i]*ivSeed;
+    }
+    gmp_randclass randseed(gmp_randinit_default);
+    randseed.seed(ivSeed);
+    mpz_class iv_secr = randseed.get_z_bits(256);
+    return iv_secr.get_str(10);
 }

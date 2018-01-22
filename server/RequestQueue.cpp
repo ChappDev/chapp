@@ -12,10 +12,10 @@ void RequestQueue::addCommandToQueue(RequestQueue::Cmd cmd) {
     switch (cmd) {
         case initDiffieHellman:
             command = new DiffieHellmanInit();
-            break;
+        break;
         case calcSharedKey:
             command = new DiffieHellmanCalcSharedKey();
-            break;
+        break;
         default:
             command = new DiffieHellmanInit();
     }
@@ -27,13 +27,12 @@ QByteArray* RequestQueue::makeRequest(QByteArray& block) {
         command = queueOfRequests->dequeue();
         block = *command->req(block,*this);
     }
-
     return &block;
 }
-void RequestQueue::handleResponse(QByteArray& fromResponse ) {
+bool RequestQueue::handleResponse(QByteArray& fromResponse ) {
     if(!queueOfRequests->isEmpty()){
         Command* command = queueOfRequests->dequeue();
-        command->res(fromResponse,*this);
+        return command->res(fromResponse,*this);
     }
 }
 bool RequestQueue::isEmpty() {

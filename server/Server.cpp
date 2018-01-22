@@ -3,6 +3,7 @@
 //
 
 #include "Server.hpp"
+#include "../client_common/AesEncoder.h"
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
@@ -10,14 +11,6 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     int port = qrand() % (65536 - 6000) + 1024; //Магия с портом, на котором сервер будет слушать
 
     start(QHostAddress::Any, quint16(port));
-}
-
-void Server::broadcast(QByteArray &message)
-{
-    foreach(QTcpSocket *val, clients.keys())
-    {
-        val->write(message);
-    }
 }
 
 /*! @brief starting the server
@@ -94,21 +87,40 @@ void Server::slotServerRead() //Читаем информацию из соке�
         // и можно будет принимать QByteArray целиком
     {
         QByteArray readString = client->readAll();
-        std::cout << "Client says : " << readString.toStdString(); //Выводим в лог
 
         if (readString == "end\r\n")
             client->close();
 
-           queue->handleResponse(readString);
+        bool resp = queue->handleResponse(readString);
+
     }
     if(!queue->isEmpty()){
         QByteArray* byteArray = new QByteArray();
         byteArray = queue->makeRequest(*byteArray);
         client->write(*byteArray);
+        if(queue->isEmpty()){
+            disconnect(client, &QTcpSocket::readyRead, this, &Server::slotServerRead);
+            connect(client, &QTcpSocket::readyRead, this, &Server::slotEncryptedRead);
+        }
         delete byteArray;
     }
 }
-
+QByteArray Server::getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg){
+    return QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+};
+QByteArray Server::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg){
+    return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+};
+void Server::slotEncryptedRead() {
+    auto *client = (QTcpSocket *) sender();
+    while (client->bytesAvailable() > 0)
+    {
+        QByteArray readString = client->readAll();
+        std::string content = readString.toStdString();
+        std::cout << "Client says : "
+                  << getDecryptedMessage(clients[client]->wrapper, content);
+    }
+}
 void Server::slotClientDisconnected()
 {
     auto *client = (QTcpSocket*)sender();

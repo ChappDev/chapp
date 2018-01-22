@@ -10,9 +10,10 @@
 #include "RequestQueue.h"
 
 struct Client {
-    Client();
-    ~Client();
-    RequestQueue* queueOfRequests;
+  Client();
+  ~Client();
+  RequestQueue* queueOfRequests;
+  DiffieHellmanWrapper* wrapper;
 };
 
 

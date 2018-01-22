@@ -8,7 +8,7 @@
 
 QByteArray* DiffieHellmanCalcSharedKey::req(QByteArray& block, RequestQueue& queue) {
     block.clear();
-    DiffieHellmanWrapper * wrapper = DiffieHellmanWrapper::getInstance();
+    DiffieHellmanWrapper * wrapper = queue.wrapper;
     block = block.fromStdString(wrapper->getServersSecret());
     wrapper->calcSharedSecret();
     return &block;
@@ -20,6 +20,5 @@ QByteArray* DiffieHellmanCalcSharedKey::req(QByteArray& block, RequestQueue& que
  * @return
  */
 bool DiffieHellmanCalcSharedKey::res(QByteArray& block, RequestQueue& queue) {
-
-    return true;
+    return false;
 }
