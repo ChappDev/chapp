@@ -117,19 +117,22 @@ void Server::slotServerRead() //Читаем информацию из соке�
 
 QByteArray Server::getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
-    return QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+  QByteArray encrypted =QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+    return encrypted;
 };
 
 QByteArray Server::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg)
 {
-  return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+  QByteArray decrypted = QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+  return decrypted;
 };
 void Server::slotClientCredentialsRead() {
   auto *client = (QTcpSocket *) sender();
   while (client->bytesAvailable() > 0)
   {
       User* user = clients[client]->user;
-      std::string data = client->readAll().toStdString();
+      QByteArray& decrypted = getDecryptedMessage(clients[client]->wrapper,client->readAll().toStdString());
+      std::string data = decrypted.toStdString();
       (!user->empty() ? user->setName(data): user->setHash(data));
       if(user->hash != "" && checkUsers(user->name,data)){
         disconnect(client, &QTcpSocket::readyRead, this, &Server::slotClientCredentialsRead);
@@ -151,7 +154,7 @@ void Server::slotEncryptedRead()
   {
     QByteArray readString = client->readAll();
     std::string content = readString.toStdString();
-    QByteArray decrypted = getDecryptedMessage(clients[client]->wrapper, content);
+    QByteArray& decrypted = getDecryptedMessage(clients[client]->wrapper, content);
     qDebug() << "Client says : " << decrypted;
     broadcast(decrypted);
   }
@@ -184,14 +187,13 @@ void Server::stop()
 
 void Server::broadcast(QByteArray &message)
 {
-
       foreach (QTcpSocket *key, clients.keys())
     {
       DiffieHellmanWrapper *wrapper = clients[key]->wrapper;
       std::string msgWithName = clients[key]->user->name;
       msgWithName.append(": ");
       msgWithName.append(message.toStdString());
-      QByteArray msg = getEncryptedMessage(wrapper, msgWithName);
+      QByteArray& msg = getEncryptedMessage(wrapper, msgWithName);
       key->write(msg);
     }
 }

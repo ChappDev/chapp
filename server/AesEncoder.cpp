@@ -7,7 +7,7 @@
 #include <openssl/aes.h>
 #include "AesEncoder.h"
 #include <openssl/aes.h>
-std::string AesEncoder::encrypt(DiffieHellmanWrapper* wrapper, std::string& message) {
+std::string& AesEncoder::encrypt(DiffieHellmanWrapper* wrapper, std::string& message) {
     gmp_randclass randseed(gmp_randinit_default);
     unsigned char aes_input[message.size()];
     unsigned char aes_key[256];
@@ -38,7 +38,7 @@ std::string AesEncoder::encrypt(DiffieHellmanWrapper* wrapper, std::string& mess
     }
     return encrypted_msg;
 }
-std::string AesEncoder::decrypt(DiffieHellmanWrapper *wrapper, std::string &message){
+std::string& AesEncoder::decrypt(DiffieHellmanWrapper *wrapper, std::string &message){
     gmp_randclass randseed(gmp_randinit_default);
     unsigned char aes_input[message.size()];
     unsigned char aes_key[256];
