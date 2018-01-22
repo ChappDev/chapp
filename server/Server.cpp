@@ -119,7 +119,9 @@ QByteArray Server::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string
 {
     return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
 };
-void Server::slotEncryptedRead() {
+
+void Server::slotEncryptedRead()
+{
     auto *client = (QTcpSocket *) sender();
     while (client->bytesAvailable() > 0)
     {
@@ -128,6 +130,7 @@ void Server::slotEncryptedRead() {
         qDebug() << "Client says : " << getDecryptedMessage(clients[client]->wrapper, content);
     }
 }
+
 void Server::slotClientDisconnected()
 {
     auto *client = (QTcpSocket*)sender();
@@ -138,7 +141,6 @@ void Server::slotClientDisconnected()
         clients.erase(clients.find(client));
     }
 }
-
 
 void Server::stop()
 {
@@ -151,8 +153,11 @@ void Server::stop()
 
 void Server::broadcast(std::string &message)
 {
+
     foreach (QTcpSocket *key, clients.keys())
         {
-            key->write(message.c_str());
+            DiffieHellmanWrapper *wrapper = clients[key]->wrapper;
+            QByteArray msg = getEncryptedMessage(wrapper, message);
+            key->write(msg);
         }
 }
