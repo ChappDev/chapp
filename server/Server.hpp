@@ -36,13 +36,7 @@ class Server : public QTcpServer
 
   void sendMessageToGroup();
 
-<<<<<<< HEAD
   void broadcast(QByteArray &message);
-=======
-    void broadcast(QByteArray &message);
-
-public slots:
->>>>>>> 070243558ddaf43f93fc419d1c7ad5f2c1034d5f
 
  public slots:
 
