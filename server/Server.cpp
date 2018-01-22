@@ -131,7 +131,7 @@ void Server::slotClientCredentialsRead() {
   while (client->bytesAvailable() > 0)
   {
       User* user = clients[client]->user;
-      QByteArray& decrypted = getDecryptedMessage(clients[client]->wrapper,client->readAll().toStdString());
+      QByteArray decrypted = getDecryptedMessage(clients[client]->wrapper,client->readAll().toStdString());
       std::string data = decrypted.toStdString();
       (!user->empty() ? user->setName(data): user->setHash(data));
       if(user->hash != "" && checkUsers(user->name,data)){
@@ -154,7 +154,7 @@ void Server::slotEncryptedRead()
   {
     QByteArray readString = client->readAll();
     std::string content = readString.toStdString();
-    QByteArray& decrypted = getDecryptedMessage(clients[client]->wrapper, content);
+    QByteArray decrypted = getDecryptedMessage(clients[client]->wrapper, content);
     qDebug() << "Client says : " << decrypted;
     broadcast(decrypted);
   }
@@ -193,7 +193,7 @@ void Server::broadcast(QByteArray &message)
       std::string msgWithName = clients[key]->user->name;
       msgWithName.append(": ");
       msgWithName.append(message.toStdString());
-      QByteArray& msg = getEncryptedMessage(wrapper, msgWithName);
+      QByteArray msg = getEncryptedMessage(wrapper, msgWithName);
       key->write(msg);
     }
 }
