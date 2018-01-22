@@ -36,7 +36,7 @@ public:
 
     void sendMessageToGroup();
 
-    void broadcast(std::string &message);
+    void broadcast(QByteArray &message);
 
 public slots:
 
