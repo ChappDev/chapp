@@ -37,7 +37,7 @@ public:
      * @param queue
      * todo:make templates
      */
-    void handleResponse(QByteArray& fromResponse);
+    bool handleResponse(QByteArray& fromResponse);
     void addCommandToQueue(RequestQueue::Cmd cmd);
     bool isEmpty();
 

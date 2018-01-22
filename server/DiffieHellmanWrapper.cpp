@@ -5,6 +5,7 @@
 #include <iostream>
 #include "DiffieHellmanWrapper.h"
 #include <openssl/sha.h>
+
 DiffieHellmanWrapper* DiffieHellmanWrapper::getInstance() {
     static DiffieHellmanWrapper* instance;
     if(instance == nullptr){

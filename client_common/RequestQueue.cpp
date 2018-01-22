@@ -32,15 +32,17 @@ QByteArray* RequestQueue::makeRequest(QByteArray& block) {
     }
     return &block;
 }
-void RequestQueue::handleResponse(QByteArray& fromResponse ) {
+bool RequestQueue::handleResponse(QByteArray& fromResponse ) {
     Command* command = nullptr;
+    bool resp = false;
     if(!queueOfRequests->isEmpty()){
         command = queueOfRequests->dequeue();
-        command->res(fromResponse,*this);
+        resp = command->res(fromResponse,*this);
     }
     if(command) {
         delete command;
     }
+    return resp;
 }
 RequestQueue* RequestQueue::getInstance(){
     static RequestQueue* instance;

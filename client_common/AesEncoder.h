@@ -11,7 +11,7 @@ class DiffieHellmanWrapper;
 class AesEncoder {
 public:
     static std::string encrypt(DiffieHellmanWrapper* wrapper, std::string message);
-    //static std::string decrypt(DiffieHellmanWrapper wrapper, std::string message);
+    static std::string decrypt(DiffieHellmanWrapper* wrapper, std::string message);
 };
 
 

@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QTimerEvent>
 #include "RequestQueue.h"
+#include "DiffieHellmanWrapper.h"
 
 class Connection : public QTcpSocket
 {
@@ -19,7 +20,7 @@ Q_OBJECT
 public:
 	
 	explicit Connection(QObject *parent = 0);
-	~Connection() = default;
+	~Connection();
 	bool connect();
 	
 	void sendMessage(const QString &message);
@@ -34,7 +35,8 @@ signals:
 private slots:
 	
 	void read();
-	
+	void encryptedRead();
+
 	void onConnected();
 	
 	void onDisconnected();
@@ -42,7 +44,8 @@ private slots:
 	void sendPing();
 
 protected:
-	
+	QByteArray getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
+	QByteArray getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg);
 	void timerEvent(QTimerEvent *timerEvent) override;
 
 private:

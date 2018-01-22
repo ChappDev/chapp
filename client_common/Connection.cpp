@@ -11,7 +11,6 @@ static const int PingInterval = 5 * 1;
 
 Connection::Connection(QObject *parent) : QTcpSocket(parent)
 {
-	
 	transferTimerId = 0;
 	pingTimer.setInterval(PingInterval);
 
@@ -23,6 +22,9 @@ Connection::Connection(QObject *parent) : QTcpSocket(parent)
 	RequestQueue::getInstance()->addCommandToQueue(RequestQueue::Cmd::initDiffieHellman);
 }
 
+Connection::~Connection(){
+}
+
 //Наивная реализация
 void Connection::read()
 {
@@ -30,13 +32,28 @@ void Connection::read()
 	while (bytesAvailable() > 0)
 	{
 		QByteArray response = readAll();
-		queue->handleResponse(response);
+		if(!queue->handleResponse(response)){
+			QObject::disconnect(this, SIGNAL(readyRead()), this, SLOT(read()));
+			QObject::connect(this, SIGNAL(readyRead()), this, SLOT(encryptedRead()));
+			encryptedRead();
+		}
 	}
     if(!queue->isEmpty()){
         QByteArray* byteArray = new QByteArray();
         byteArray = queue->makeRequest(*byteArray);
         write(*byteArray);
     }
+}
+QByteArray Connection::getEncryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg){
+	return QByteArray::fromStdString(AesEncoder::encrypt(wrapper,msg));
+};
+QByteArray Connection::getDecryptedMessage(DiffieHellmanWrapper* wrapper,std::string msg){
+	return QByteArray::fromStdString(AesEncoder::decrypt(wrapper,msg));
+};
+void Connection::encryptedRead()
+{
+	//просто тест, будет писаться после того как юзер будет взаимодействовать с консолью
+	write(getEncryptedMessage(DiffieHellmanWrapper::getInstance(),"test"));
 }
 
 void Connection::onConnected()
@@ -74,8 +91,7 @@ void Connection::sendMessage(const QString &message)
 {
 	if (message.isEmpty())
 		return;
-
-
+	
 	QByteArray msg = message.toUtf8();
 	write(msg);
 }

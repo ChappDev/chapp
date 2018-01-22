@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc,argv);
+	QCoreApplication app(argc,argv);
 
 	Connection myConnection;
 
@@ -21,5 +21,5 @@ int main(int argc, char *argv[])
 
 	myConnection.connectToHost(QString(host.c_str()), port);
 
-    return app.exec();
+	return app.exec();
 }

@@ -44,7 +44,6 @@ void DiffieHellmanWrapper::setClientSecret(mpz_class from, mpz_class to) {
     if(!__gmpz_cmp_si(client_secret.get_mpz_t(),10000000L)){
         abort();
     }
-    std::cout << client_secret.get_mpz_t() << "\n";
 }
 void DiffieHellmanWrapper::setServerExp(mpz_class& setServer_exp) {
     server_exp = setServer_exp;
@@ -57,8 +56,6 @@ void DiffieHellmanWrapper::setPrimeNumber(mpz_class& setPrime) {
 */
 void DiffieHellmanWrapper::calcSharedSecret() {
     mpz_powm(shared_secret.get_mpz_t(),server_exp.get_mpz_t(),client_secret.get_mpz_t(),prime.get_mpz_t());
-    std::cout << shared_secret.get_mpz_t() << "\n";
-    std::cout << "\n" <<  getHash() << "\n";
 }
 std::string DiffieHellmanWrapper::sha256(std::string line) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
