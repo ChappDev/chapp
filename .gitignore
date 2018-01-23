@@ -9,6 +9,7 @@
 *.so
 *.dll
 *.dylib
+*.idea
 
 # Qt-es
 
@@ -47,15 +48,17 @@ CMakeLists.txt.user*
 
 .DS_Store
 
+<<<<<<< HEAD
 # From on github/gitignore
 # Covers JetBrains IDEs
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
-
+.idea/*
 # Sensitive or high-churn files:
 .idea/**/dataSources/
 .idea/**/dataSources.ids
@@ -70,3 +73,9 @@ cmake-build-debug/
 
 ## File-based project format:
 *.iws
+
+## Another
+dump.rdb
+
+# CMake
+cmake-build-debug/

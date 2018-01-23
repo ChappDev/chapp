@@ -1,0 +1,20 @@
+Some thoughts about cryptography algorithms for chapp
+ * connection to server will realized d-h algorithm,
+ * After:
+     * data will be encrypted by aes-256 bit
+     * + simple hmac of encrypted data from server and client
+     * hmac private & public keys on the d-h initiating,
+     * it will help authorize the client for server, and server from client after session was created
+ * In common case its not secured from mitM, attacker can use this scenario:
+ * 1.hijacking requests from user and presents to him like a server
+ * 2.when client would making some sort of whatsapp authorization by 2 connectors with some sort of smiles,
+ * attacker can lie about smiles from second client, and making dialog open, so client will thinking that he speaks with
+ * another human. Its can be bypassed if people will meeting and compare there secure codes.
+ * Another case (also if people compare codes):
+ * 1. intercepts 2 sides of connection (2 humans, which wants to communicate)
+ * 2. they get identical secure code
+ * 3. they are think that all is ok
+ * https://tlgrm.ru/techfaq#атака-человек-посередине
+ * https://en.wikipedia.org/wiki/Station-to-Station_protocol another case of safe alogrithm, but we cant be sure in certificates by clients...
+ * so, only working case is to use checking of secure code in real life
+ * https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange#Description

@@ -1,0 +1,169 @@
+syntax = "proto2";
+
+package Chapp.API;
+
+message User {
+  required uint32 id = 1;
+  required string username = 2;
+}
+
+enum GroupType {
+  Public = 0;
+  Private = 1;
+  Protected = 2;
+}
+
+message Group {
+  required uint32 id = 1;
+  required string name = 2;
+  required GroupType type = 3;
+  optional bytes phash = 4;
+}
+
+message Message {
+  extensions 100 to max;
+
+  enum Type {
+    Text = 0;
+  }
+
+  required uint32 from_uid = 1;
+  required uint32 to_gid = 2;
+  required Type type = 3;
+}
+
+message TextMessage {
+  extend Message {
+    optional TextMessage msg = 101;
+  }
+
+  required string text = 1;
+}
+
+message ReqResp {
+  extensions 100 to max;
+
+  // RType - 1 * 10 + 1 == inner id
+  enum RType {
+    sendMessage = 0;
+
+    joinGroup = 1;
+    leaveGroup = 2;
+    inviteUser = 3;
+
+    createGroup = 4;
+
+    listGroups = 5;
+
+    listUsers = 6;
+
+    // some requrests just return "ok" or error
+    okresp = 999;
+    error = 99;
+  }
+
+  enum Kind {
+    req = 0;
+    resp = 1;
+  }
+
+  // required uint32 for_uid = 1;
+  required uint32 rid = 2;
+  required RType inline_type = 3;
+  required Kind kind = 4;
+}
+
+message RPError {
+  extend ReqResp {
+    optional RPError inner = 981;
+  }
+
+  required uint32 code = 1;
+  optional string description = 2;
+}
+
+message RQsendMessage {
+  extend ReqResp {
+    optional RQsendMessage inner = 101;
+  }
+
+  required uint32 gid = 1;
+  required Message msg = 2;
+}
+
+message RQjoinGroup {
+  extend ReqResp {
+    optional RQjoinGroup inner = 111;
+  }
+
+  required uint32 gid = 1;
+  optional bytes phash = 2;
+}
+
+message RQleaveGroup {
+  extend ReqResp {
+    optional RQleaveGroup inner = 121;
+  }
+
+  required uint32 gid = 1;
+}
+
+message RQinviteUser {
+  extend ReqResp {
+    optional RQinviteUser inner = 131;
+  }
+
+  required uint32 uid = 1;
+  required uint32 gid = 2;
+}
+
+message RQlistGroups {
+  extend ReqResp {
+    optional RQlistGroups inner = 141;
+  }
+
+  // what is this?..
+  required bool invites = 1;
+}
+
+message RPlistGroups {
+  extend ReqResp {
+    optional RPlistGroups inner = 142;
+  }
+
+  repeated Group groups = 1;
+}
+
+message RQcreateGroup {
+  extend ReqResp {
+    optional RQcreateGroup inner = 151;
+  }
+
+  required string name = 1;
+  required GroupType type = 2;
+  optional bytes phash = 3;
+}
+
+message RPcreateGroup {
+  extend ReqResp {
+    optional RPcreateGroup inner = 152;
+  }
+
+  required Group groups = 1;
+}
+
+message RQlistUsers {
+  extend ReqResp {
+    optional RQlistUsers inner = 161;
+  }
+
+  required uint32 gid = 1;
+}
+
+message RPlistUsers {
+  extend ReqResp {
+    optional RPlistUsers inner = 162;
+  }
+
+  repeated User users = 1;
+}
